@@ -19,6 +19,12 @@ bash recipes/doctor.sh        # health check (works standalone)
 |---|---|---|---|
 | `claude` | 2.1.286 | **musl-loader** | official `linux-arm64-musl` build, 723KB loader |
 | `copilot` | latest | **custom-script** | GitHub Copilot CLI engine via native `gh copilot` |
+| `cursor` | 2026.09.28 | **glibc-shim** | Anysphere official `linux-arm64` agent bundle via glibc loader |
+| `kimi` | 2.1.1 | node-runner | Moonshot Kimi Code CLI (@moonshot-ai/kimi-code) |
+| `qwen` | 0.24.7 | node-runner | Alibaba Qwen Code CLI (@qwen-code/qwen-code) |
+| `vibe` | 2.25.8 | python-cli | Mistral Vibe minimal CLI coding agent (mistral-vibe) |
+| `nanobot` | latest | python-cli | HKUDS Nanobot personal AI agent & multi-channel gateway |
+| `clideck` | 2.4.0 | node-pty | Multi-agent parallel terminal web dashboard with mobile relay |
 | `opencode` | 1.18.31 | glibc + DNS shim | DO NOT TOUCH (primary driver) |
 | `kilo` | 7.8.1 | **musl-loader** | official `linux-arm64-musl` binary + libstdc++ rpath |
 | `command-code` | 1.73.0 | node-runner | isolated prefix ($PREFIX/opt/command-code, no cmd collision) |

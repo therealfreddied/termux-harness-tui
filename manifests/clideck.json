@@ -1,0 +1,14 @@
+{
+  "name": "clideck",
+  "version": "2.4.0",
+  "category": "routing",
+  "recipe": "custom-script",
+  "recipe_script": "clideck-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/clideck"
+  },
+  "deps": ["nodejs"],
+  "post_install": "clideck --help",
+  "notes": "CLIdeck multi-agent web dashboard (clideck). Locally-hosted frontend for orchestrating Claude, Codex, Gemini, OpenCode, Kimi, etc., in real parallel terminal sessions with mobile relay. Command: clideck.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

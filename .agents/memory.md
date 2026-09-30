@@ -1,5 +1,36 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — Added Kimi Code, Qwen Code, Mistral Vibe, Nanobot, Cursor CLI, and CLIdeck
+
+- **Kimi Code (`kimi`)**:
+  - Upstream npm package `@moonshot-ai/kimi-code` (v2.1.1).
+  - Pure JS bundle (`dist/main.mjs`) + on-device Bionic `node-pty` compilation.
+  - Installed in `$PREFIX/opt/kimi`, launcher `$PREFIX/bin/kimi`.
+  - Verified on-device: `kimi --help` passed.
+- **Qwen Code (`qwen`, `qwen-code`)**:
+  - Upstream npm package `@qwen-code/qwen-code` (v0.24.7).
+  - Pure JS bundle (`cli-entry.js`).
+  - Installed in `$PREFIX/opt/qwen`, launcher `$PREFIX/bin/qwen` (and alias `qwen-code`).
+  - Verified on-device: `qwen --help` passed.
+- **Mistral Vibe (`vibe`)**:
+  - Upstream PyPI package `mistral-vibe` (v2.25.8).
+  - Minimal Python coding agent by Mistral AI.
+  - Installed via `pip install mistral-vibe`, launcher `$PREFIX/bin/vibe`.
+- **Nanobot (`nanobot`)**:
+  - Upstream PyPI package `nanobot-ai` (HKUDS).
+  - Lightweight self-hosted personal AI agent + multi-channel gateway (Telegram/Discord/WhatsApp) & MCP.
+  - Installed via `pip install nanobot-ai`, launcher `$PREFIX/bin/nanobot`.
+- **Cursor CLI (`cursor`, `cursor-agent`)**:
+  - Official Anysphere `linux/arm64` agent bundle (`downloads.cursor.com`).
+  - Bundles glibc native `.node` addons. Runs natively via our `$PREFIX/glibc/lib/ld-linux-aarch64.so.1` loader wrapper.
+  - Installed in `$PREFIX/opt/cursor`, launcher `$PREFIX/bin/cursor` (and alias `cursor-agent`).
+  - Verified on-device: `cursor -v` -> `2026.09.28-64d2043`.
+- **CLIdeck (`clideck`)**:
+  - Upstream npm package `clideck` (v2.4.0).
+  - Multi-agent parallel terminal web dashboard with mobile relay.
+  - Installed in `$PREFIX/opt/clideck`, launcher `$PREFIX/bin/clideck`.
+  - Verified on-device: `clideck --help` passed.
+
 ## 2026-09-30 — Added Kilo Code, Command Code, and GitHub Copilot CLI to installer hub
 
 - **Kilo Code (`kilo`, `kilocode`)**:

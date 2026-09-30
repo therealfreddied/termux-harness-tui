@@ -1,0 +1,14 @@
+{
+  "name": "qwen",
+  "version": "0.24.7",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "qwen-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@qwen-code/qwen-code"
+  },
+  "deps": ["nodejs"],
+  "post_install": "qwen --help",
+  "notes": "Alibaba Qwen Code CLI (@qwen-code/qwen-code). Pure JS runner in $PREFIX/opt/qwen. Commands: qwen, qwen-code.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

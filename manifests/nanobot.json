@@ -1,0 +1,14 @@
+{
+  "name": "nanobot",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "custom-script",
+  "recipe_script": "nanobot-termux.sh",
+  "source": {
+    "url": "https://pypi.org/project/nanobot-ai/"
+  },
+  "deps": ["python"],
+  "post_install": "nanobot --help",
+  "notes": "HKUDS Nanobot personal AI agent framework (nanobot-ai). Lightweight Python agent with Telegram, Discord, WhatsApp, and MCP gateway support. Commands: nanobot onboard, nanobot agent, nanobot gateway.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

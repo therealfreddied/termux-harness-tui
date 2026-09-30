@@ -18,13 +18,13 @@ Dim=$'\e[2m'
 Rst=$'\e[0m'
 
 declare -A CATEGORY=(
-  [1]="platform-giants|Platform Giants  (claude, copilot, codex, gemini, grok)"
-  [2]="claw-fleet|Claw Fleet       (openclaw, zeroclaw, picoclaw, ironclaw)"
+  [1]="platform-giants|Platform Giants  (claude, copilot, cursor, gemini, grok, kimi, qwen, vibe)"
+  [2]="claw-fleet|Claw Fleet       (openclaw, zeroclaw, picoclaw, nanobot, microclaw, ironclaw)"
   [3]="open-engines|Open Engines     (opencode, cline, kilo, command-code, aider)"
   [4]="standalone-cores|Standalone Cores (deepseek, antigravity, openclaude)"
   [5]="swarms|Swarms           (cmux, hermes, herdr, multica)"
   [6]="seceng|SecEng           (pentestcode)"
-  [7]="routing|Routing          (omniroute, 9router, cliproxyapi)"
+  [7]="routing|Routing & Frontends (clideck, omniroute, 9router, cliproxyapi)"
   [8]="mcp-tooling|MCP & Tooling    (bwb-browser, curl-cffi)"
 )
 

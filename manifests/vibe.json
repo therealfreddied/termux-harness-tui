@@ -1,0 +1,14 @@
+{
+  "name": "vibe",
+  "version": "2.25.8",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "vibe-termux.sh",
+  "source": {
+    "url": "https://pypi.org/project/mistral-vibe/"
+  },
+  "deps": ["python"],
+  "post_install": "vibe --help",
+  "notes": "Mistral Vibe CLI (mistral-vibe). Official minimal CLI coding agent by Mistral AI. Command: vibe.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

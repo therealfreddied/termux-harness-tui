@@ -1,0 +1,14 @@
+{
+  "name": "kimi",
+  "version": "2.1.1",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "kimi-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@moonshot-ai/kimi-code"
+  },
+  "deps": ["nodejs"],
+  "post_install": "kimi --help",
+  "notes": "Moonshot Kimi Code CLI (@moonshot-ai/kimi-code). Isolated in $PREFIX/opt/kimi with on-device Bionic node-pty. Command: kimi.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

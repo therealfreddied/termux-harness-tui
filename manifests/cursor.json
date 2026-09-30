@@ -1,0 +1,14 @@
+{
+  "name": "cursor",
+  "version": "latest",
+  "category": "platform-giants",
+  "recipe": "glibc-shim",
+  "recipe_script": "cursor-termux.sh",
+  "source": {
+    "url": "https://cursor.com/cli"
+  },
+  "deps": ["glibc"],
+  "post_install": "cursor -v",
+  "notes": "Official Cursor CLI agent (Anysphere). Uses linux-arm64 bundle via glibc loader wrapper in $PREFIX/opt/cursor. Commands: cursor, cursor-agent.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}
