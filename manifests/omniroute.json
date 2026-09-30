@@ -1,0 +1,29 @@
+{
+  "name": "omniroute",
+  "version": "3.8.51",
+  "category": "routing",
+  "recipe": "omniroute-full",
+  "variants": {
+    "full": {
+      "label": "omniroute (full dashboard)",
+      "description": "Complete build: dashboard UI + API + inference plane. Heavier build (~2GB RAM during Next.js compile, not recommended on-device — build on VPS or install precompiled dist/).",
+      "build_profile": "default",
+      "needs": ["dist/server.js", "app/ (dashboard static)"]
+    },
+    "lite": {
+      "label": "omniroute-lite (CLI/API only)",
+      "description": "OMNIROUTE_BUILD_BACKEND_ONLY=1: full backend API + inference plane, dashboard stubbed. ~40% smaller, builds with ~1.5GB heap. Recommended for Termux on-device builds.",
+      "build_profile": "backend-only",
+      "needs": ["dist/server.js"]
+    }
+  },
+  "default_variant": "lite",
+  "source": {
+    "url": "https://github.com/diegosouzapw/OmniRoute",
+    "notes": "npm package is precompiled x64/glibc — on aarch64/Termux the ONLY viable path is source build. Termux-native patches required: (1) better-sqlite3 must be compiled from source (node -p process.platform = 'android', prebuilds never match); (2) node-machine-id needs android case + persistent $HOME/.omniroute/machine-id; (3) /v1/models visibility patch re-applied post-build."
+  },
+  "deps": ["nodejs", "clang", "make", "python", "pkg-config", "sqlite"],
+  "post_install": "node bin/omniroute.mjs doctor",
+  "notes": "Server: omniroute serve --no-open. Port 20128. Endpoints: /api/health, /v1/models, /v1/chat/completions. Base-URL intercept for harnesses: OPENAI_BASE_URL=http://127.0.0.1:20128/v1 ANTHROPIC_BASE_URL=http://127.0.0.1:20128/v1",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (lite build in progress)"
+}

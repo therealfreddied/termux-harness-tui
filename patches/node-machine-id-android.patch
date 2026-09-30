@@ -1,0 +1,15 @@
+--- pristine-nmi/index.js	1985-10-26 04:15:00.000000000 -0400
++++ /data/data/com.termux/files/home/omniroute/node_modules/node-machine-id/index.js	2026-09-30 12:30:04.471994480 -0400
+@@ -12,7 +12,12 @@
+         win32: `${win32RegBinPath[isWindowsProcessMixedOrNativeArchitecture()]}\\REG.exe ` +
+             'QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography ' +
+             '/v MachineGuid',
++        // Termux/Android: /etc is read-only; use boot_id (stable per boot,
++        // hashed below so restarts just rotate the derived token) with a
++        // persistent fallback file so the id survives across boots.
+         linux: '( cat /var/lib/dbus/machine-id /etc/machine-id 2> /dev/null || hostname ) | head -n 1 || :',
++        android: '( cat "$HOME/.omniroute/machine-id" 2> /dev/null || ' +
++            'cat /proc/sys/kernel/random/boot_id 2> /dev/null || hostname ) | head -n 1 || :',
+         freebsd: 'kenv -q smbios.system.uuid || sysctl -n kern.hostuuid'
+     };
+ 

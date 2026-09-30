@@ -1,0 +1,14 @@
+{
+  "name": "grok",
+  "version": "duro02-port",
+  "category": "platform-giants",
+  "recipe": "bionic-rust",
+  "source": {
+    "url": "https://github.com/Duro02/grok-build-termux/releases/latest/download/grok-termux-aarch64.tar.gz",
+    "size_mb": 30
+  },
+  "deps": ["ripgrep"],
+  "post_install": "grok --version",
+  "notes": "Community Termux port of xAI Grok Build (Rust TUI). Download tarball + .sha256, verify, extract, install -m 755 grok $PREFIX/bin/grok. NOT YET TESTED on this phone.",
+  "verified_on": "pending"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cline",
+  "version": "3.0.61",
+  "category": "open-engines",
+  "recipe": "custom-script",
+  "source": {
+    "url": "https://github.com/gamihardik2009-crypto/cline-termux",
+    "size_mb": 52
+  },
+  "deps": ["glibc-repo", "glibc-runner", "curl", "tar"],
+  "post_install": "cline --version",
+  "notes": "Bun-compiled glibc binary wrapped by bun-termux + shim. Installer clones repo and runs its install.sh (pinned SHA-256s for npm tarball + ELF). Idempotent.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

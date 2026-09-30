@@ -1,0 +1,15 @@
+--- pristine/lib/binding.js	1985-10-26 04:15:00.000000000 -0400
++++ /data/data/com.termux/files/home/omniroute/node_modules/better-sqlite3/lib/binding.js	2026-09-30 12:00:07.399995166 -0400
+@@ -39,6 +39,12 @@
+ }
+ 
+ function getPrebuildPath() {
++	// Termux/Android ('android' platform): never use linux prebuilds here —
++	// they are glibc builds that segfault inside Bionic node. Fall through
++	// to the source build in build/Release instead.
++	if (process.platform === 'android') {
++		return null;
++	}
+ 	if (PREBUILD_PLATFORMS.includes(process.platform) && PREBUILD_ARCHS.includes(process.arch)) {
+ 		const target = `${isLinuxMusl() ? 'linuxmusl' : process.platform}-${process.arch}`;
+ 		const filename = path.join(__dirname, '..', 'prebuilds', `${target}.node`);

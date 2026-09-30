@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Termux Harness Manifest",
+  "type": "object",
+  "required": ["name", "version", "recipe", "source"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Command name installed into $PREFIX/bin"
+    },
+    "version": { "type": "string" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "platform-giants", "claw-fleet", "open-engines",
+        "standalone-cores", "swarms", "seceng", "routing", "mcp-tooling"
+      ]
+    },
+    "recipe": {
+      "type": "string",
+      "enum": ["glibc-bun", "bionic-rust", "node-shebang", "twin-binary", "python-cffi", "custom-script"],
+      "description": "Which recipes/<name>/install.sh to run"
+    },
+    "source": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "size_mb": { "type": "number" }
+      }
+    },
+    "deps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "pkg packages needed before install (e.g. glibc-repo, patchelf)"
+    },
+    "post_install": {
+      "type": "string",
+      "description": "Optional smoke-test command, e.g. 'cline --version'"
+    },
+    "notes": { "type": "string" },
+    "verified_on": {
+      "type": "string",
+      "description": "Date + device this manifest was last confirmed working"
+    }
+  }
+}

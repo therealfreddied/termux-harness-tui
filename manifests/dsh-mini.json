@@ -1,0 +1,14 @@
+{
+  "name": "dsh",
+  "version": "mini-latest",
+  "category": "standalone-cores",
+  "recipe": "custom-script",
+  "source": {
+    "url": "https://github.com/LouisYang841/dsh-mini",
+    "size_mb": 8
+  },
+  "deps": [],
+  "post_install": "dsh --version",
+  "notes": "DeepSeek Harness mini: 7.7MB self-contained single file + 26-line launcher via curl|sh. Needs Node >= 22.15 (phone has v24). Zero native modules. Termux-specific fixes already upstream (SELinux rename, flush-before-exit). NOT YET TESTED on this phone.",
+  "verified_on": "pending"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "bwb-browser",
+  "version": "v4-latest",
+  "category": "mcp-tooling",
+  "recipe": "custom-script",
+  "source": {
+    "url": "https://github.com/krshforever/bwb-browser",
+    "size_mb": 0.14
+  },
+  "deps": [],
+  "post_install": "bwb-browser --help",
+  "notes": "30KB MCP browser automation server, raw CDP, static-first fetch ladder (no Chromium unless JS needed), survives Android OOM. Author built it on Termux. Candidate MCP add-on for all harnesses. NOT YET TESTED.",
+  "verified_on": "pending"
+}
