@@ -1,0 +1,14 @@
+{
+  "name": "claude",
+  "version": "latest",
+  "category": "platform-giants",
+  "recipe": "glibc-shim",
+  "recipe_script": "claude-termux.sh",
+  "source": {
+    "url": "https://github.com/gtbuchanan/claude-code-termux"
+  },
+  "deps": ["glibc-repo"],
+  "post_install": "claude --version",
+  "notes": "Anthropic publishes no android-arm64 binary (gh #72620). gtbuchanan launcher downloads official linux-arm64 and ELF-patches it for the glibc loader; launcher self-manages versions under ~/.local/share/claude. Accepted route: stable + fast. Verified 2.1.285.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

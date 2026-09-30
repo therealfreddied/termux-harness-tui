@@ -43,7 +43,9 @@ recipe_for() {
 # actually is right now. Any failure just hides the badge.
 latest_of() {
   local url="$1" pkg
-  pkg="$(printf '%s' "$url" | sed -n 's#.*registry\.npmjs\.org/\(@\{0,1\}[^/?]*\)\{0,1\}.*#\1#p')"
+  # Accept both "@scope/pkg" and "@scope%2fpkg" URL forms; the %2f encoding
+  # below is required either way for scoped fetches.
+  pkg="$(printf '%s' "$url" | sed -n 's#.*registry\.npmjs\.org/\(@[^/?]*/[^/?]*\|@\{0,1\}[^/?]*\).*#\1#p')"
   [ -n "$pkg" ] || return 1
   case "$pkg" in @*) ;; *) return 1 ;; esac
   curl -fsSL --max-time 8 "https://registry.npmjs.org/${pkg//\//%2f}" 2>/dev/null \

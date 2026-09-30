@@ -1,5 +1,58 @@
 # Termux Harness TUI — Working Notes
 
+## Prebuilt-verdict round: thin recipes for platform-giants (2026-09-30)
+
+Follow-up to the "which harnesses have quality upstream prebuilts" research.
+Verdict table (full detail in session memory):
+
+- **Tier 1 (official first-party, works on Bionic)**: Pi (pi.dev official
+  Termux docs, npm, no native modules), Gemini CLI (pure-JS npm), Aider
+  (PyPI), Hermes — official NousResearch signed APT repo exists BUT their
+  docs currently say "Termux broken, fix in progress"; meanwhile OUR own
+  prebuilt (therealfreddied/openclaw-lean v0.19.0-termux, sha256-pinned) is
+  the working route — user confirmed it works fine; hermes.json +
+  hermes-termux.sh already implement download→verify→extract→install.
+- **Tier 2 (quality community prebuilt, tracks upstream)**: codex
+  (@mmmbuto/codex-cli-termux, 0.156.1-termux.1 vs upstream 0.159.2),
+  opencode (bd-loser/opencode-bionic .deb, same-day upstream tag — NOT
+  TOUCHED, existing glibc+DNS shim install is DO-NOT-TOUCH), agy
+  (wallentx, native Bionic NDK r27d, self-updating), openclaude
+  (@gitlawb npm), grok (Duro02 tarball), dsh (Vengisk release), cline
+  (bun+glibc, works but less clean).
+- **Tier 3 (no quality prebuilt)**: claude-code (no android-arm64 upstream,
+  gh #72620; gtbuchanan glibc-loader launcher accepted as the route since
+  it is stable and fast), goose (glibc only; aaif fork has musl tarball),
+  openclaw (AidanPark glibc-ld.so installer; owned by other agent).
+
+### agy vs antigravity (user question)
+Same binary. `$PREFIX/bin/antigravity` is a symlink to `$PREFIX/bin/agy`
+(wallentx repack convenience alias). "Antigravity" is the product, `agy`
+the command name.
+
+### Broken-then-fixed on device
+gemini + pi were installed but broken: npm bin stubs keep `#!/usr/bin/env`
+which Bionic lacks. `termux-fix-shebang` fixed both in place; verified
+gemini 0.46.0 and pi 0.99.1 run. This one-liner IS the whole recipe for
+pure-JS npm harnesses.
+
+### New thin recipes + manifests (all committed)
+- `recipes/codex-termux.sh` + `manifests/codex.json` — npm install -g
+  @mmmbuto/codex-cli-termux + fix-shebang + verify.
+- `recipes/gemini-termux.sh` + `manifests/gemini.json` — npm install -g
+  @google/gemini-cli + fix-shebang.
+- `recipes/pi-termux.sh` + `manifests/pi.json` — npm install -g
+  --ignore-scripts @earendil-works/pi-coding-agent + fix-shebang (per
+  upstream pi.dev Termux docs).
+- `recipes/claude-termux.sh` + `manifests/claude.json` — gtbuchanan
+  install.sh (glibc loader route, accepted; launcher self-updates).
+- `bin/harness-hub` `latest_of()` bugfix: the sed only captured the scope
+  (`@google`) for scoped npm URLs, so the "npm latest is" badge silently
+  never rendered. Now captures `@scope/pkg` too (accepts both raw and
+  %2f-encoded forms). Verified live: codex 0.156.1-termux.1, gemini 0.62.0,
+  pi 0.99.2.
+- TUI smoke-tested: Platform Giants renders all 5 with installed/npm-latest
+  badges; shellcheck clean; all JSON validates.
+
 ## curl_cffi proper installer (2026-09-30)
 
 Question: does the TUI have a proper, Python-version-agnostic curl_cffi

@@ -1,0 +1,14 @@
+{
+  "name": "pi",
+  "version": "latest",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "pi-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@earendil-works/pi-coding-agent"
+  },
+  "deps": ["nodejs"],
+  "post_install": "pi --version",
+  "notes": "First-party Termux support per pi.dev/docs/latest/termux: npm install -g --ignore-scripts, no native modules. Verified 0.99.1 after termux-fix-shebang.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

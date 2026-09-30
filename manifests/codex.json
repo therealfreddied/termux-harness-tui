@@ -1,0 +1,14 @@
+{
+  "name": "codex",
+  "version": "latest",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "codex-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@mmmbuto/codex-cli-termux"
+  },
+  "deps": ["nodejs"],
+  "post_install": "codex --version",
+  "notes": "OpenAI ships no android-arm64 binary. @mmmbuto/codex-cli-termux republishes upstream on npm as X.Y.Z-termux.N (0.156.1-termux.1 on 2026-09-24, upstream 0.159.2). Update = re-run recipe.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}
