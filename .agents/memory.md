@@ -1,5 +1,17 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — 9router machine-id Termux runtime patch & installer automation
+
+- Upstream `9router` (`src/cli/api/client.js`) had an unconditional top-level `require("node-machine-id")`.
+- On Termux / Android, `node-machine-id` is not bundled globally in the runtime and lacks standard Linux `/etc/machine-id` access, causing top-level import errors when running 9router CLI.
+- Created [`patches/9router-machine-id-android.patch`](file:///storage/emulated/0/LLM/termux-harness-tui/patches/9router-machine-id-android.patch):
+  1. Removes the unconditional top-level `require("node-machine-id")`.
+  2. Wraps lookup inside `loadRawMachineId()` with safe lazy `require("node-machine-id")` fallback.
+- Updated [`recipes/9router-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/9router-termux.sh):
+  1. Initializes persistent `$HOME/.9router/machine-id` from `/proc/sys/kernel/random/boot_id` (with `/dev/urandom` fallback).
+  2. In-place patches `src/cli/api/client.js` idempotently upon extraction.
+- Verified on-device: `9router --version` (`0.5.91`) verified, doctor check passed.
+
 ## 2026-09-30 — Claude Code upgraded to musl loader (723KB, no glibc runtime)
 
 - Migrated from `gtbuchanan` glibc loader (~449MB) to `Aarstad/claude-code-termux-musl`.

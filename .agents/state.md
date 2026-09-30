@@ -33,7 +33,7 @@ cline, bwb, pentestcode, routing CLIs.
 | **Platform Giants** | **ALL 5 DONE** — claude 2.1.286 (musl loader, 723KB, verified), codex 0.156.1 (@mmmbuto npm), gemini 0.46.0, pi 0.99.1, grok | manifests+recipes updated & in-tree |
 | **dsh (DeepSeek)** | INSTALLED + VERIFIED — community prebuilt, 318 MB, `dsh web` HTTP 200 | `$PREFIX/opt/dsh`, launcher `$PREFIX/bin/dsh` |
 | **hermes** | INSTALLED + works — sha256-pinned prebuilt hosted on `therealfreddied/termux-harness-tui` release | `manifests/hermes.json`, `recipes/hermes-termux.sh` |
-| **Routing Layer** | **ALL 3 INTEGRATED** — `cli-proxy-api` (hosted prebuilt), `9router` (npm tarball, port 20129), `omniroute` | manifests + recipes in-tree |
+| **Routing Layer** | **ALL 3 INTEGRATED** — `cli-proxy-api` (hosted prebuilt), `9router` (npm tarball + Termux machine-id patch, port 20129), `omniroute` | manifests + recipes in-tree |
 | gemini + pi shebang fix | were broken (`#!/usr/bin/env`); `termux-fix-shebang` fixed on-device | applied 2026-09-30 |
 | `bin/harness-hub` | `latest_of()` bugfix: scoped npm URLs now resolve npm-latest badges | committed `619847b` |
 | `recipes/omniroute-termux.sh` | done; `full` variant HARD-BLOCKED on-device | repo |
