@@ -1,0 +1,56 @@
+name: Build OmniRoute Termux Standalone
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'OmniRoute Version Tag'
+        required: true
+        default: '3.8.51'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout termux-harness-tui
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Clone OmniRoute Source
+        run: |
+          git clone --depth 1 -b "release/v${{ inputs.version }}" https://github.com/diegosouzapw/OmniRoute.git ~/omniroute-src
+
+      - name: Install Dependencies
+        working-directory: /home/runner/omniroute-src
+        run: |
+          npm ci --no-audit --no-fund
+
+      - name: Build Backend Standalone (Fast & Low RAM)
+        working-directory: /home/runner/omniroute-src
+        run: |
+          rm -rf .build dist
+          export NODE_OPTIONS="--max-old-space-size=12288"
+          OMNIROUTE_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs
+          if [ ! -f dist/server.js ] && [ -d .build/next/standalone ]; then
+            mkdir -p dist
+            cp -a .build/next/standalone/. dist/
+          fi
+          test -f dist/server.js || { echo "FATAL: dist/server.js missing" >&2; exit 1; }
+          node --check dist/server.js
+          tar -czf omniroute-dist-${{ inputs.version }}-backend.tar.gz dist/
+          sha256sum omniroute-dist-${{ inputs.version }}-backend.tar.gz > omniroute-dist-${{ inputs.version }}-backend.tar.gz.sha256
+
+      - name: Release Backend Bundle
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: omniroute-${{ inputs.version }}-backend
+          name: "OmniRoute ${{ inputs.version }} Backend Standalone (Termux)"
+          files: |
+            /home/runner/omniroute-src/omniroute-dist-${{ inputs.version }}-backend.tar.gz
+            /home/runner/omniroute-src/omniroute-dist-${{ inputs.version }}-backend.tar.gz.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
