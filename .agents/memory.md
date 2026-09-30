@@ -1,5 +1,22 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — Added Kilo Code, Command Code, and GitHub Copilot CLI to installer hub
+
+- **Kilo Code (`kilo`, `kilocode`)**:
+  - Upstream publishes `@kilocode/cli-linux-arm64-musl` with native aarch64 musl binary.
+  - Linked against musl and libstdc++. Recipe uses Alpine musl runtime in `$PREFIX/lib/musl/` (`ld-musl-aarch64.so.1`, `libstdc++.so.6`, `libgcc_s.so.1`) and patches interpreter and rpath.
+  - Installed into `$PREFIX/opt/kilo` with wrapper launcher `$PREFIX/bin/kilo` (and symlink `kilocode`).
+  - Verified on-device: `kilo --version` -> `7.8.1`, smoke test / help menus passed.
+- **Command Code (`command-code`, `commandcode`, `cmdc`)**:
+  - Upstream npm package `command-code` (v1.73.0).
+  - Contains bin name `cmd` which collides with Termux's system `$PREFIX/bin/cmd` wrapper.
+  - Recipe installs into isolated prefix `$PREFIX/opt/command-code` and exports `command-code`, `commandcode`, and `cmdc` launchers without clobbering system `cmd`.
+  - Verified on-device: `command-code --help` and `cmdc --help` passed.
+- **GitHub Copilot CLI (`copilot`)**:
+  - Official GitHub Copilot in the CLI via native `gh copilot` engine.
+  - Recipe verifies `gh` dependency and exports `$PREFIX/bin/copilot` launcher.
+  - Verified on-device: `copilot --help` passed.
+
 ## 2026-09-30 — 9router machine-id Termux runtime patch & installer automation
 
 - Upstream `9router` (`src/cli/api/client.js`) had an unconditional top-level `require("node-machine-id")`.

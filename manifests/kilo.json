@@ -1,0 +1,14 @@
+{
+  "name": "kilo",
+  "version": "7.8.1",
+  "category": "open-engines",
+  "recipe": "custom-script",
+  "recipe_script": "kilo-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@kilocode/cli-linux-arm64-musl"
+  },
+  "deps": ["patchelf", "curl", "tar"],
+  "post_install": "kilo --version",
+  "notes": "Kilo Code CLI (@kilocode/cli-linux-arm64-musl). Patched with Alpine musl loader + libstdc++ rpath into $PREFIX/opt/kilo. Commands: kilo, kilocode.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

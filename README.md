@@ -18,7 +18,10 @@ bash recipes/doctor.sh        # health check (works standalone)
 | Command | Version | Recipe | Note |
 |---|---|---|---|
 | `claude` | 2.1.286 | **musl-loader** | official `linux-arm64-musl` build, 723KB loader |
+| `copilot` | latest | **custom-script** | GitHub Copilot CLI engine via native `gh copilot` |
 | `opencode` | 1.18.31 | glibc + DNS shim | DO NOT TOUCH (primary driver) |
+| `kilo` | 7.8.1 | **musl-loader** | official `linux-arm64-musl` binary + libstdc++ rpath |
+| `command-code` | 1.73.0 | node-runner | isolated prefix ($PREFIX/opt/command-code, no cmd collision) |
 | `codex` | 0.156.1 | node-shebang | `@mmmbuto/codex-cli-termux` |
 | `openclaude` | 0.31.0 | node-shebang | `termux-fix-shebang` |
 | `agy` / `antigravity` | 1.2.14 | twin-binary | `wallentx/antigravity-cli-termux` |

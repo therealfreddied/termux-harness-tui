@@ -1,0 +1,14 @@
+{
+  "name": "command-code",
+  "version": "1.73.0",
+  "category": "open-engines",
+  "recipe": "custom-script",
+  "recipe_script": "command-code-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/command-code"
+  },
+  "deps": ["nodejs"],
+  "post_install": "command-code --help",
+  "notes": "Command Code CLI (command-code). Installed into isolated $PREFIX/opt/command-code prefix to avoid collision with Termux's system cmd wrapper. Commands: command-code, commandcode, cmdc.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

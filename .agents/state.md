@@ -30,12 +30,13 @@ cline, bwb, pentestcode, routing CLIs.
 | Piece | State | Location |
 |---|---|---|
 | Repo | updated with routing manifests & prebuilt releases | sdcard path / GitHub master |
-| **Platform Giants** | **ALL 5 DONE** — claude 2.1.286 (musl loader, 723KB, verified), codex 0.156.1 (@mmmbuto npm), gemini 0.46.0, pi 0.99.1, grok | manifests+recipes updated & in-tree |
+| **Platform Giants** | **ALL DONE** — claude 2.1.286 (musl loader), copilot (gh engine), codex 0.156.1, gemini 0.46.0, pi 0.99.1, grok | manifests+recipes updated & in-tree |
+| **Open Engines** | **ALL INTEGRATED** — opencode 1.18.31 (DO-NOT-TOUCH), cline 3.0.61, kilo 7.8.1 (musl loader, verified), command-code 1.73.0 (isolated prefix, verified) | manifests+recipes in-tree |
 | **dsh (DeepSeek)** | INSTALLED + VERIFIED — community prebuilt, 318 MB, `dsh web` HTTP 200 | `$PREFIX/opt/dsh`, launcher `$PREFIX/bin/dsh` |
 | **hermes** | INSTALLED + works — sha256-pinned prebuilt hosted on `therealfreddied/termux-harness-tui` release | `manifests/hermes.json`, `recipes/hermes-termux.sh` |
 | **Routing Layer** | **ALL 3 INTEGRATED** — `cli-proxy-api` (hosted prebuilt), `9router` (npm tarball + Termux machine-id patch, port 20129), `omniroute` | manifests + recipes in-tree |
 | gemini + pi shebang fix | were broken (`#!/usr/bin/env`); `termux-fix-shebang` fixed on-device | applied 2026-09-30 |
-| `bin/harness-hub` | `latest_of()` bugfix: scoped npm URLs now resolve npm-latest badges | committed `619847b` |
+| `bin/harness-hub` | `latest_of()` bugfix + new manifests integrated | verified live |
 | `recipes/omniroute-termux.sh` | done; `full` variant HARD-BLOCKED on-device | repo |
 | `~/omniroute/dist/server.js` | MISSING — waiting on VPS build | — |
 | VPS build + GH release | EXTERNAL: user relays handoff to VPS OpenClaw | — |

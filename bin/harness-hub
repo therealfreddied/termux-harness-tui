@@ -18,9 +18,9 @@ Dim=$'\e[2m'
 Rst=$'\e[0m'
 
 declare -A CATEGORY=(
-  [1]="platform-giants|Platform Giants  (claude, codex, gemini, grok)"
+  [1]="platform-giants|Platform Giants  (claude, copilot, codex, gemini, grok)"
   [2]="claw-fleet|Claw Fleet       (openclaw, zeroclaw, picoclaw, ironclaw)"
-  [3]="open-engines|Open Engines     (opencode, cline, aider, goose)"
+  [3]="open-engines|Open Engines     (opencode, cline, kilo, command-code, aider)"
   [4]="standalone-cores|Standalone Cores (deepseek, antigravity, openclaude)"
   [5]="swarms|Swarms           (cmux, hermes, herdr, multica)"
   [6]="seceng|SecEng           (pentestcode)"

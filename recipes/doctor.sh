@@ -68,9 +68,9 @@ fi
 
 echo
 echo "-- installed harnesses --"
-for c in claude opencode codex openclaude agy antigravity cline grok dsh hermes bwb curl-cffi pentestcode cli-proxy-api 9router; do
+for c in claude copilot codex gemini pi grok opencode cline kilo command-code openclaude agy antigravity dsh hermes openclaw zeroclaw picoclaw microclaw bwb curl-cffi pentestcode cli-proxy-api 9router; do
   p="$PREFIX/bin/$c"
   if [ -e "$p" ]; then
-    printf "%-12s %s\n" "$c" "$(command -v "$c")"
+    printf "%-14s %s\n" "$c" "$(command -v "$c")"
   fi
 done

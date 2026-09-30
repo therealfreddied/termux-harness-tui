@@ -1,0 +1,14 @@
+{
+  "name": "copilot",
+  "version": "latest",
+  "category": "platform-giants",
+  "recipe": "custom-script",
+  "recipe_script": "copilot-termux.sh",
+  "source": {
+    "url": "https://github.com/cli/cli"
+  },
+  "deps": ["gh"],
+  "post_install": "copilot --help",
+  "notes": "GitHub Copilot in the CLI via GitHub CLI's official engine (gh copilot). Command: copilot.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}
