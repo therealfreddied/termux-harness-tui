@@ -1,0 +1,13 @@
+{
+  "name": "picoclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "prefab-android",
+  "recipe_script": "picoclaw-termux.sh",
+  "source": {
+    "url": "https://github.com/sipeed/picoclaw/releases/latest"
+  },
+  "post_install": "picoclaw --help",
+  "notes": "Sipeed's independent Go rewrite (NOT an OpenClaw fork): ~8MB static binary, <10MB RAM, targets $10 boards; Telegram+Discord channels. Versioned asset names -> recipe redirect-scrapes latest tag, then uses tag-pinned picoclaw_Linux_arm64.tar.gz (STATICALLY linked, runs natively on Android) + picoclaw_<ver>_checksums.txt for verification. android-universal.zip exists but is NOT covered by checksums - avoided.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (probe: static binary runs natively)"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "openclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "custom-script",
+  "recipe_script": "openclaw-termux.sh",
+  "source": {
+    "url": "https://openclaw.ai/install.sh"
+  },
+  "deps": ["nodejs", "curl"],
+  "post_install": "openclaw --version",
+  "notes": "The original claw (ex-Clawdbot, 186K+ stars, TS, 430K LOC). Official installer: curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard. Needs Node >=24.16 <25 or >=26.1 (device has 24.18). In-tree updater: openclaw update --channel stable. Heavy: ~1GB RAM when Gateway runs. npm package 'openclaw' (2026.9.7).",
+  "verified_on": "pending — node check passed 2026-09-30, full install not yet run"
+}

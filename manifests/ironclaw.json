@@ -1,0 +1,11 @@
+{
+  "name": "ironclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "custom-script",
+  "source": {
+    "url": "https://github.com/JoasASantos/ironclaw"
+  },
+  "notes": "NEAR AI's secure Rust agent framework (TEE-backed, AES-256-GCM vault, per-tool sandbox). NO prebuilt binaries anywhere (nearai/near-ironclaw + JoasASantos/ironclaw have no releases). Only working Termux route today = proot: npm 'ironclaw-termux' (mithun50) installs proot-distro Ubuntu + rustup + cargo build from source. NOT native - conflicts with our no-proot policy, so no native recipe yet. Native path = NDK r27b cross-compile (state.md backlog #5). See docs.ironclaw.com.",
+  "verified_on": "not installed (proot-only route documented)"
+}

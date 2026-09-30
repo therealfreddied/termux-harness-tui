@@ -1,0 +1,14 @@
+{
+  "name": "microclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "glibc-shim",
+  "recipe_script": "microclaw-termux.sh",
+  "source": {
+    "url": "https://github.com/microclaw/microclaw/releases/latest"
+  },
+  "deps": ["glibc-repo", "curl", "tar"],
+  "post_install": "microclaw --version",
+  "notes": "Rust agent inspired by nanoclaw (727 stars, channel-agnostic core + platform adapters). aarch64 asset is glibc-DYNAMIC -> needs glibc loader wrapper (verified: loader --library-path run gives 'microclaw 0.7.0'). Recipe resolves latest tag (versioned asset names), verifies SHA256SUMS.txt, installs binary to lib dir + bash wrapper in bin. 3 flavors upstream (base/-full/-work); we install base.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (probe: runs via glibc loader)"
+}

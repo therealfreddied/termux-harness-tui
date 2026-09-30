@@ -1,0 +1,11 @@
+{
+  "name": "nanoclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "custom-script",
+  "source": {
+    "url": "https://github.com/gavrielc/nanoclaw"
+  },
+  "notes": "Container-first security answer to OpenClaw: 700 LOC TS, one Docker container per chat group, WhatsApp (Baileys) + Telegram/Slack/Discord/Gmail, Claude Agent SDK. Latest v2.4.0. Docker is MANDATORY (nanoclaw.sh provisions Node+pnpm+Docker; agents run in Linux containers) -> NOT natively installable on Android (no Docker). Would need proot Ubuntu + Docker-in-proot; out of scope for no-proot installer. Repo mirror: nanocoai/nanoclaw.",
+  "verified_on": "not installed (Docker required - unsupported natively)"
+}

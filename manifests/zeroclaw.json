@@ -1,0 +1,13 @@
+{
+  "name": "zeroclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "prefab-android",
+  "recipe_script": "zeroclaw-termux.sh",
+  "source": {
+    "url": "https://github.com/zeroclaw-labs/zeroclaw/releases/latest/download/zeroclaw-aarch64-linux-android.tar.gz"
+  },
+  "post_install": "zeroclaw --version",
+  "notes": "Rust rewrite of OpenClaw: 3.4MB-ish static bin, <5MB RAM, 10ms boot, 22+ providers, SQLite hybrid memory, 'zeroclaw migrate openclaw' import. Official aarch64-linux-android asset = ZERO patching, verified runs (0.8.5). SHA256SUMS from same latest/download URL. Tarball also ships web/dist dashboard; extract to lib dir, wrapper in bin. Onboard: zeroclaw onboard --api-key ...; daemon: zeroclaw daemon.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (probe: --version runs natively)"
+}

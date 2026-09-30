@@ -1,5 +1,52 @@
 # Termux Harness TUI — Working Notes
 
+## curl_cffi proper installer (2026-09-30)
+
+Question: does the TUI have a proper, Python-version-agnostic curl_cffi
+installer? **It did NOT** (menu label + PLAN candidate only, no manifest/
+recipe). The proper method already exists and it is the user's own:
+`therealfreddied/curl-cffi-termux` (main @ 85b5f4f, script sha256
+`0c3e8867a104f4a9b802c70c1c22df5815e6c875c88585b34fd32bafa4303b2d`).
+
+Why neither stock path is "proper" on Termux:
+- **`pip install curl_cffi` (PyPI android wheel)**: upstream ships
+  `cp313-cp313-android_24_arm64_v8a` built against `libpython3.13.so` —
+  broken on every other Termux Python (3.10/3.11/3.12/3.14): import dies
+  on missing libpython. NOT version-agnostic.
+- **sdist build with stock Termux toolchain**: Termux clang resolves
+  `-lc++` to `/system/lib64/libc++.so` (ancient, no `__ndk1` ABI) →
+  `_wrapper.abi3.so` fails dlopen with
+  `cannot locate symbol _ZNSt6__ndk1...`.
+- PyPI also has `cp310-abi3` manylinux/musllinux wheels — glibc/musl, not
+  Bionic; irrelevant here.
+
+The proper method (user's script, 139 lines, idempotent, ~1 min fresh):
+1. `pkg`-provision only missing toolchain (python clang make binutils
+   libc++ libffi pkg-config).
+2. Gate: live `impersonate='chrome'` request to example.com → if HTTP 200,
+   exit "nothing to do" (re-run is free).
+3. pip-build-deps import-check (cffi/wheel/setuptools), install only missing.
+4. `pip download` sdist → patch `scripts/build.py` `"-lc++"` →
+   `"-lc++_shared"` **inside ephemeral mktemp dir only** (no global changes)
+   → build with `--no-binary :all: --no-build-isolation`. build.py fetches a
+   prebuilt static `libcurl-impersonate.a` (aarch64-linux-android) and fuses
+   it into the wrapper.
+5. Output wheel is **abi3 → installs/works on ANY Python ≥3.10**,
+   self-contained (static libcurl), verified by live HTTP 200 + readelf
+   check that `_wrapper.abi3.so` links `libc++_shared.so`.
+- Pin: default `curl_cffi==0.16.0` (known-good static-archive ABI; newer
+  may reintroduce `__ndk1` drift). Override: `CURL_CFFI_VERSION`, `--force`,
+  `PIP=...`.
+- Verified on THIS device: `import curl_cffi` → 0.16.0, chrome
+  impersonation → HTTP 200 (2026-09-30).
+
+TUI wiring: `manifests/curl-cffi.json` (category mcp-tooling) +
+`recipes/curl-cffi-termux.sh` (pinned-commit fetch + sha256 verify + run
+upstream script + install `$PREFIX/bin/curl-cffi` version shim so the hub's
+installed-badge/post_install checks work). NOTE: outer `y` confirm in the
+hub is the approval gate for the inner `pkg install`/pip calls; on an
+already-provisioned phone the script never reaches pip (stage-2 gate exits).
+
 ## Claw Fleet research + installer support (2026-09-30)
 
 Full detail in `notes/CLAW-FLEET.md`. Highlights:

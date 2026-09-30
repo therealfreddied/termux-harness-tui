@@ -1,0 +1,15 @@
+{
+  "name": "curl-cffi",
+  "version": "0.16.0",
+  "category": "mcp-tooling",
+  "recipe": "custom-script",
+  "recipe_script": "curl-cffi-termux.sh",
+  "source": {
+    "url": "https://raw.githubusercontent.com/therealfreddied/curl-cffi-termux/85b5f4f8072d60a104854c860c3942684d79686c/install-curl-cffi.sh",
+    "sha256": "0c3e8867a104f4a9b802c70c1c22df5815e6c875c88585b34fd32bafa4303b2d"
+  },
+  "deps": ["python", "clang", "make", "binutils", "libc++", "libffi", "pkg-config"],
+  "post_install": "curl-cffi --version",
+  "notes": "Python-version-agnostic curl_cffi (browser TLS impersonation) via user's proven method: therealfreddied/curl-cffi-termux. Builds abi3 wheel from sdist with ephemeral -lc++->-lc++_shared patch (avoids /system/lib64/libc++.so __ndk1 ABI crash) + static libcurl-impersonate.a -> works on ANY Python >=3.10, self-contained. Stock pip is broken here: upstream android wheel links libpython3.13.so (off-by-one on other pythons). Idempotent: live impersonate='chrome' gate exits instantly when working; only --force rebuilds. Default pin curl_cffi==0.16.0 (known-good static-archive ABI). Recipe pins installer script by commit+sha256; hub's y-confirm is the approval gate for inner pkg/pip.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (curl_cffi 0.16.0, chrome impersonation HTTP 200)"
+}

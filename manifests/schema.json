@@ -19,7 +19,7 @@
     },
     "recipe": {
       "type": "string",
-      "enum": ["glibc-bun", "bionic-rust", "node-shebang", "twin-binary", "python-cffi", "custom-script"],
+      "enum": ["glibc-bun", "bionic-rust", "node-shebang", "twin-binary", "python-cffi", "custom-script", "prefab-android", "glibc-shim"],
       "description": "Which recipes/<name>/install.sh to run"
     },
     "recipe_script": {
