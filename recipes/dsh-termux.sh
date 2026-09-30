@@ -1,12 +1,33 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # dsh-termux.sh — install the real DeepSeek Harness (dsh) natively on Termux.
 #
-# Replaces the old dsh-mini third-party repack. This installs the official
-# package from the @deepseek-ai npm scope, unmodified, plus four thin Termux
-# adaptations. No proot, no glibc, no fork.
+#   DSH_TERMUX_ROUTE=prebuilt dsh-termux.sh   # DEFAULT — community patch set
+#   DSH_TERMUX_ROUTE=patch dsh-termux.sh      # the route below, ours
 #
-#   dsh-termux.sh              # latest @deepseek-ai/dsh
-#   dsh-termux.sh 0.2.0-rc.2  # pin a version
+# ─────────────────────────────────────────────────────────────────────────────
+# DEFAULT ROUTE IS NOW SOMEONE ELSE'S WORK. Use it.
+#
+# Vengisk/deepseek-harness-termux (MIT) already solved this properly: nine
+# per-package source patches, real prebuilt koffi and node-pty for android-arm64,
+# a WASM sharp, a ripgrep platform shim, and --expose-internals on the shebang.
+# Verified here: dsh web serves HTTP 200. Read notes/DSH-TERMUX.md.
+#
+# What follows is the patch layer we wrote first. It is kept only as the
+# DSH_TERMUX_ROUTE=patch fallback, because it is the one that can follow npm
+# `latest` (the community prebuilt bundles 0.1.0-rc.7, npm is at 0.2.0-rc.2).
+# Do not use it by default: it was never installed or run, it stubs three
+# native modules into loading-but-doing-nothing, and it misses fixes that only
+# show up at boot — session persistence uses link(2) and dies on Android
+# sepolicy, @vscode/ripgrep has no android-arm64 package so the grep/glob tools
+# fail, and HMR needs --expose-internals.
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# The patch route installs the official package from the @deepseek-ai npm
+# scope, unmodified, plus four thin Termux adaptations. No proot, no glibc, no
+# fork.
+#
+#   DSH_TERMUX_ROUTE=patch dsh-termux.sh              # latest @deepseek-ai/dsh
+#   DSH_TERMUX_ROUTE=patch dsh-termux.sh 0.2.0-rc.2  # pin a version
 #   DSH_TERMUX_SHARP=1 dsh-termux.sh   # also build sharp against Termux libvips
 #
 # Why it needs adapting at all (all verified on SM-S911W, aarch64, Node 24.18):
@@ -36,6 +57,129 @@ Crim=$'\e[38;5;161m'
 Rst=$'\e[0m'
 log() { printf '%s==>%s %s\n' "$Crim" "$Rst" "$*"; }
 die() { printf '\033[31mFATAL:\033[0m %s\n' "$*" >&2; exit 1; }
+
+ROUTE="${DSH_TERMUX_ROUTE:-prebuilt}"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ROUTE: prebuilt — the community patch set (default, recommended)
+# ══════════════════════════════════════════════════════════════════════════════
+if [ "$ROUTE" = "prebuilt" ]; then
+    TERMUX_REL="v0.1.0-termux.1"
+    TGZ_URL="https://github.com/Vengisk/deepseek-harness-termux/releases/download/$TERMUX_REL/dsh-termux-full.tgz"
+    TGZ_SHA="aa9f2ffc372c223a77ed38c08b76741533f7967cc19903815b3838d117e13b7f"
+    TGZ_MB=50.9
+    # Upstream dsh is bundled inside; it is not a separate install target.
+    DSH_DIR="$PREFIX/opt/dsh"
+    DSH_BIN_DEST="$PREFIX/bin/dsh"
+    WORK="$PREFIX/tmp/opencode/dsh-install"
+    mkdir -p "$WORK"
+
+    log "route: prebuilt (Vengisk/deepseek-harness-termux, MIT, $TERMUX_REL)"
+
+    [ "$(uname -m)" = "aarch64" ] || die "the prebuilt ships android-arm64 binaries only"
+    command -v node >/dev/null || die "node missing: pkg install nodejs"
+    NODE_MAJOR="$(node -p 'process.versions.node.split(".")[0]')"
+    [ "$NODE_MAJOR" -ge 22 ] || die "node >= 22.19 required; found $(node -v)"
+
+    TGZ="$WORK/dsh-termux-full.tgz"
+    if [ -f "$TGZ" ] && [ "$(sha256sum "$TGZ" | cut -d' ' -f1)" = "$TGZ_SHA" ]; then
+        log "tarball already downloaded and verified — skipping"
+    else
+        log "downloading dsh-termux-full.tgz (${TGZ_MB} MB)..."
+        curl -fSL --connect-timeout 20 --retry 3 -o "$TGZ.part" "$TGZ_URL" \
+            || die "download failed: $TGZ_URL"
+        mv "$TGZ.part" "$TGZ"
+        GOT="$(sha256sum "$TGZ" | cut -d' ' -f1)"
+        [ "$GOT" = "$TGZ_SHA" ] || die "sha256 mismatch
+  expected $TGZ_SHA
+  got      $GOT
+  Refusing to install. Delete $TGZ and retry, or re-check the release notes."
+        log "sha256 OK"
+    fi
+
+    log "extracting to $DSH_DIR..."
+    STAGE="$WORK/stage"
+    rm -rf "$STAGE" 2>/dev/null || true
+    mkdir -p "$STAGE"
+    tar -xzf "$TGZ" -C "$STAGE"
+    [ -d "$STAGE/package" ] || die "unexpected tarball layout: no package/"
+
+    # Replace the tree in one go so a failed extract cannot leave a half-dsh.
+    NEW="$WORK/dsh.new"
+    rm -rf "$NEW" 2>/dev/null || true
+    mv "$STAGE/package" "$NEW"
+    rm -rf "$DSH_DIR" 2>/dev/null || true
+    mkdir -p "$(dirname "$DSH_DIR")"
+    mv "$NEW" "$DSH_DIR"
+    rm -rf "$STAGE" 2>/dev/null || true
+    log "tree in place ($(du -sh "$DSH_DIR" 2>/dev/null | cut -f1))"
+
+    mkdir -p "$(dirname "$DSH_BIN_DEST")"
+    cat > "$DSH_BIN_DEST" <<EOF
+#!/data/data/com.termux/files/usr/bin/bash
+# DeepSeek Harness (community Termux build). Generated by recipes/dsh-termux.sh.
+DSH_PREFIX="\${DSH_PREFIX:-$DSH_DIR}"
+# --expose-internals is required: cordis-plugin-hmr reads node:internal/modules,
+# which Node has gated since v22. Upstream's bin.js shebang already carries it.
+exec node --expose-internals "\$DSH_PREFIX/lib/bin.js" "\$@"
+EOF
+    chmod 755 "$DSH_BIN_DEST"
+    printf '%s\n' "$TERMUX_REL" > "$DSH_DIR/.dsh-termux-build"
+    log "launcher -> $DSH_BIN_DEST"
+
+    # The @vscode/ripgrep shim is the one thing install.sh writes to disk and the
+    # prebuilt tarball may not carry. Without it the glob/grep tools fail in
+    # every fresh process, so create it here too.
+    RG_SHIM="$DSH_DIR/node_modules/@vscode/ripgrep-android-arm64"
+    if [ -x "$PREFIX/bin/rg" ] && [ ! -f "$RG_SHIM/package.json" ]; then
+        mkdir -p "$RG_SHIM/bin"
+        cat > "$RG_SHIM/package.json" <<EOF
+{
+  "name": "@vscode/ripgrep-android-arm64",
+  "version": "1.18.0",
+  "description": "Termux shim: rgPath -> system ripgrep. @vscode/ripgrep has no android platform package.",
+  "license": "MIT",
+  "bin": { "rg": "bin/rg" }
+}
+EOF
+        ln -sf "$PREFIX/bin/rg" "$RG_SHIM/bin/rg"
+        log "ripgrep android shim -> $PREFIX/bin/rg"
+    fi
+
+    log "verifying..."
+    if "$DSH_BIN_DEST" --version >/dev/null 2>&1; then
+        echo "  dsh         OK ($("$DSH_BIN_DEST" --version 2>&1 | head -1))"
+    else
+        echo "  dsh         WARN: --version failed; try 'dsh --help'"
+    fi
+    # Prove the natives really are Bionic and really dlopen here.
+    if (cd "$DSH_DIR" && node -e "require('node-pty');process.exit(0)" >/dev/null 2>&1); then
+        echo "  node-pty    OK (prebuilt, loads under Bionic)"
+    else
+        echo "  node-pty    FAIL: the prebuilt pty.node did not load"
+    fi
+    if (cd "$DSH_DIR" && node -e "require('koffi');process.exit(0)" >/dev/null 2>&1); then
+        echo "  koffi       OK (prebuilt, loads under Bionic)"
+    else
+        echo "  koffi       WARN: did not load; FFI features (file dialogs) unavailable"
+    fi
+    GLIBC="$(strings -a "$DSH_DIR/node_modules/node-pty/build/Release/pty.node" 2>/dev/null | grep -c 'GLIBC_\|ld-linux-aarch64' || true)"
+    [ "${GLIBC:-0}" -eq 0 ] && echo "  libc        OK (no glibc refs in pty.node)" \
+                           || echo "  libc        FAIL: pty.node references glibc — wrong artifact"
+
+    BUNDLED="$(node -p "require('$DSH_DIR/package.json').version" 2>/dev/null || echo '?')"
+    echo
+    log "done. 'dsh web' serves http://127.0.0.1:3080 ; 'dsh' for the CLI."
+    log "bundle $BUNDLED (dsh 0.1.0-rc.7) vs npm latest 0.2.0-rc.2 — two generations behind,"
+    log "and the patches were diffed against 0.1.0-rc.6. See notes/DSH-TERMUX.md."
+    exit 0
+fi
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ROUTE: patch — our own layer (fallback, never installed, see header)
+# ══════════════════════════════════════════════════════════════════════════════
+[ "$ROUTE" = "patch" ] || die "unknown DSH_TERMUX_ROUTE='$ROUTE' (want 'prebuilt' or 'patch')"
+log "route: patch (ours — unproven; the prebuilt route is the default for a reason)"
 
 # ── 0. preconditions ────────────────────────────────────────────────────────
 [ "$(uname -m)" = "aarch64" ] || die "this recipe is aarch64-only"

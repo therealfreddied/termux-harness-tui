@@ -1,21 +1,23 @@
 {
   "name": "dsh",
-  "version": "npm-latest",
+  "version": "0.1.0-rc.7-termux.1",
   "category": "standalone-cores",
   "recipe": "custom-script",
   "recipe_script": "dsh-termux.sh",
   "source": {
-    "url": "https://registry.npmjs.org/@deepseek-ai/dsh",
-    "size_mb": 0.1
+    "url": "https://github.com/Vengisk/deepseek-harness-termux/releases/download/v0.1.0-termux.1/dsh-termux-full.tgz",
+    "sha256": "aa9f2ffc372c223a77ed38c08b76741533f7967cc19903815b3838d117e13b7f",
+    "size_mb": 50.9
   },
-  "deps": [
-    "nodejs",
-    "clang",
-    "make",
-    "python",
-    "git"
-  ],
+  "upstream": {
+    "repo": "https://github.com/Vengisk/deepseek-harness-termux",
+    "patches_repo": "https://github.com/Vengisk/deepseek-harness-termux",
+    "license": "MIT",
+    "bundles_dsh": "0.1.0-rc.7",
+    "npm_latest_dsh": "0.2.0-rc.2"
+  },
+  "deps": [],
   "post_install": "dsh --version",
-  "notes": "Official DeepSeek Harness (dsh), resolved from the @deepseek-ai npm scope at install time — not the old dsh-mini repack. Runs natively on Bionic. Four Termux adaptations: (1) a NODE_OPTIONS --require preload reports process.platform as 'linux', because Node says 'android' on Termux and dsh-subprocess-local's process inspector rejects anything but linux/darwin; NODE_OPTIONS is used so the override also reaches worker_threads, which get a fresh process object. (2) node-pty is compiled from source against Termux pty.h/libutil, since the published linux-arm64 prebuild is glibc-linked. (3) koffi, sharp and sherpa-onnx are stubbed — no Android build exists and none is reachable on Linux except sharp. (4) install runs with --ignore-scripts so koffi's cnoke build and node-pty's node-gyp fallback do not run. Landlock sandboxing probes as unavailable on this kernel and dsh runs unsandboxed, which is upstream's documented fail-closed path. Re-run the recipe to upgrade to a newer release.",
-  "verified_on": "shim + node-pty Bionic build verified on 2026-09-30 SM-S911W aarch64 Node 24.18; full dsh run pending first install"
+  "notes": "Pre-patched DeepSeek Harness for native Bionic/Termux, by Vengisk (MIT). Prefer this over patching the official npm package ourselves — see notes/DSH-TERMUX.md. dsh-termux-full.tgz is a flattened tree of 196 @deepseek-ai/* packages with the Android patches already applied, prebuilt node-pty 1.2.0-beta.15 and koffi 3.1.5 for android-arm64 (both 'for Android 24', 0 GLIBC refs), @img/sharp-wasm32 for image work, a @vscode/ripgrep-android-arm64 shim, and --expose-internals on the bin.js shebang. Nine per-package source patches replace our blunt global platform shim: bash shell resolution, session-persistence link(2)->rename(2), subprocess-local android-as-linux, termux-open path/URL opening, native dir picker, workspace archive check, proot sandbox runner, and ripgrep resolution. Verified on 2026-09-30 SM-S911W aarch64 Node 24.18: node-pty spawned a real /dev/pts/1 shell, koffi loaded libc.so (getpid + stat), dsh -V reported 0.1.0-rc.7-termux.1, and 'dsh web' served HTTP 200 in ~15s. Caveats: bundles dsh 0.1.0-rc.7 vs npm latest 0.2.0-rc.2 (two generations behind, and the patches were diffed against 0.1.0-rc.6 so they may not apply to newer trees); sharp is bundled but not actually imported; bubblewrap sandboxing is blocked by Android sepolicy so agent bash commands run unisolated. Lighter alternative: the 367KB dsh-termux.tgz, same patches and natives with a postinstall that fetches dsh (pinned 0.1.0-rc.6, override with DSH_VERSION).",
+  "verified_on": "2026-09-30 SM-S911W aarch64 Node 24.18 — natives load, dsh -V OK, dsh web serves HTTP 200"
 }

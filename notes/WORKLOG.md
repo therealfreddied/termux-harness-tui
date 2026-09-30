@@ -1,5 +1,34 @@
 # Termux Harness TUI — Working Notes
 
+## Claw Fleet research + installer support (2026-09-30)
+
+Full detail in `notes/CLAW-FLEET.md`. Highlights:
+
+- Ecosystem surveyed: OpenClaw (186K stars, TS, the original), ZeroClaw
+  (Rust, 3.4MB), NanoClaw (700 LOC, Docker-mandatory), Nanobot (Python),
+  PicoClaw (Go, Sipeed), IronClaw (Rust/NEAR AI), MicroClaw (Rust, 727★).
+- **Zero-patch wins**: ZeroClaw ships `aarch64-linux-android` asset
+  (runs natively, 0.8.5); PicoClaw's `Linux_arm64` is a STATIC ELF that
+  runs natively AND is checksummed (its android-universal.zip is NOT
+  covered by checksums — avoid).
+- **Gotcha**: `picoclaw --version` exits 1 (prints banner); smoke with
+  `--help` instead. Found only by checking the real exit code without a
+  pipe (piping through `head` masks exit status — pipefail still gives
+  head's status in `$?` when captured outside).
+- **Gotcha**: microclaw's aarch64 asset is glibc-DYNAMIC; direct exec
+  gives misleading "No such file or directory" (missing
+  `/lib/ld-linux-aarch64.so.1`). Fix = wrapper exec'ing
+  `$PREFIX/glibc/lib/ld-linux-aarch64.so.1 --library-path
+  "$PREFIX/glibc/lib:$PREFIX/lib"` (claude precedent).
+- **IronClaw**: no prebuilt binaries upstream; only `ironclaw-termux`
+  npm (proot Ubuntu + rustup build) → proot-only today, native =
+  NDK cross-compile backlog.
+- **NanoClaw**: Docker required (container-per-chat) → not native.
+- Installed + validated through the hub menu: zeroclaw 0.8.5,
+  picoclaw 0.3.1, microclaw 0.7.0 (all checksum-verified, smoke-tested).
+  openclaw recipe ready (official install.sh, --no-onboard) but NOT run
+  — heavy install, awaiting user go-ahead.
+
 ## Auto-latest installer design (researched 2026-09-30, all verified on-device)
 
 Goal: installer always fetches latest upstream, with the patch strategy that
@@ -76,7 +105,7 @@ the repo pins the METHOD, not the version.
 | Tool | Version | Layout |
 |---|---|---|
 | grok | 1.0.41 | native Bionic ELF → `$PREFIX/bin/grok` (from Duro02 release, sha256-verified) |
-| dsh | official `@deepseek-ai/dsh` | replacing the mini repack: `$PREFIX/opt/dsh` npm tree + `shim/dsh-termux-preload.cjs` via NODE_OPTIONS + Bionic `node-pty` → `dsh` (recipes/dsh-termux.sh, notes/DSH-TERMUX.md) |
+| dsh | 0.1.0-rc.7-termux.1 | **community prebuilt** (Vengisk) at `$PREFIX/opt/dsh` — 318MB flattened tree, 196 `@deepseek-ai/*`, prebuilt android-arm64 node-pty + koffi, 9 in-tree patches, ripgrep shim, `--expose-internals` shebang → `dsh`. `dsh web` verified HTTP 200. |
 | bwb | 4.0.1 | `$PREFIX/lib/bwb-browser` + 20-pkg node_modules → `bwb` (MCP stdio, 26 tools verified) |
 | pentestcode | 0.2.6 | musl shim → `$PREFIX/bin/pentestcode` (Alpine musl loader + libstdc++) |
 | cli-proxy-api | 8.0.4 | on-device Go rebuild → `$PREFIX/bin/cli-proxy-api` |
@@ -100,6 +129,13 @@ the repo pins the METHOD, not the version.
 
 - 9router default port 20128 == omniroute default 20128. Plan: 9router→20129
   in its launcher, omniroute keeps 20128.
+
+## DeepSeek Harness port — OUR LAYER, SUPERSEDED (2026-09-30)
+
+Superseded the same day. See the section below and notes/DSH-TERMUX.md. Kept as
+`DSH_TERMUX_ROUTE=patch` because it is the only route that can follow npm
+`latest`; it was never installed or run. Everything below describes why we
+stopped shipping it by default.
 
 ## DeepSeek Harness port (2026-09-30)
 
@@ -140,3 +176,39 @@ prebuild.
 
 Status: shim and node-pty build verified. Full `dsh` session not yet run —
 installing 562 packages on the phone is the user's call.
+
+## DeepSeek Harness — community prebuilt, INSTALLED AND VERIFIED (2026-09-30)
+
+Abandoned our own patch layer. Found `Vengisk/deepseek-harness-termux` (MIT,
+51 stars) — nine per-package source patches plus prebuilt android-arm64
+natives, and the release `dsh-termux-full.tgz` is the whole thing pre-applied.
+
+`recipes/dsh-termux.sh` now defaults to `ROUTE=prebuilt`: download 50.9 MB,
+verify sha256, extract to `$PREFIX/opt/dsh`, write a launcher, re-create the
+`@vscode/ripgrep-android-arm64` shim, then verify. `ROUTE=patch` keeps our
+layer available since the prebuilt is pinned to dsh 0.1.0-rc.7 while npm is at
+0.2.0-rc.2.
+
+Installed and verified on this device:
+
+    dsh -V                -> 0.1.0-rc.7-termux.1
+    node-pty              -> prebuilt, ELF aarch64 "for Android 24", loads, /dev/pts/1
+    koffi                 -> prebuilt, loads libc.so, getpid + stat() work
+    pty.node glibc refs   -> 0
+    dsh web --port 3197   -> HTTP 200 in ~10s, <title>DeepSeek Harness</title>, 12109 bytes
+    disk                  -> 318MB, 21GB still free
+
+Sharper than our layer on every point that only shows up at boot: real koffi
+instead of a stub, WASM sharp instead of a stub, the ripgrep platform shim we
+missed entirely, `link(2)`→`rename(2)` in session persistence (I had checked
+`dsh-atomic-write`, concluded upstream was already rename-only, and was wrong
+about which package does the writing), and `--expose-internals` for HMR.
+
+The old dsh-mini is retired: `$PREFIX/bin/dsh` is the new launcher (the mini one
+is saved at `$PREFIX/tmp/dsh-mini-launcher.bak`). Its data is left alone at
+`$PREFIX/lib/dsh-mini` and `~/.dsh-mini` — delete those when you are satisfied.
+
+Still open: no API key configured, so no real prompt has been sent. sharp is
+bundled but unwired (no native binding, nothing imports sharp-wasm32). And the
+bubblewrap sandbox is blocked by Android sepolicy, so agent bash commands run
+unisolated — true of every Termux route.
