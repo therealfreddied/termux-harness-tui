@@ -3,49 +3,59 @@
 ## 2026-09-30 — Added Kimi Code, Qwen Code, Mistral Vibe, Nanobot, Cursor CLI, and CLIdeck
 
 - **Kimi Code (`kimi`)**:
-  - Upstream npm package `@moonshot-ai/kimi-code` (v2.1.1).
-  - Pure JS bundle (`dist/main.mjs`) + on-device Bionic `node-pty` compilation.
-  - Installed in `$PREFIX/opt/kimi`, launcher `$PREFIX/bin/kimi`.
+  - Upstream npm package: `@moonshot-ai/kimi-code` (v2.1.1).
+  - Architecture: Pure JS bundle (`dist/main.mjs`) + on-device Bionic `node-pty` native compilation.
+  - Prefix & Launcher: Installed into isolated prefix `$PREFIX/opt/kimi`, launcher `$PREFIX/bin/kimi`.
+  - Native fixes: Builds node-pty against Android Bionic headers; uses Node.js 24/26 without glibc runtime.
   - Verified on-device: `kimi --help` passed.
 - **Qwen Code (`qwen`, `qwen-code`)**:
-  - Upstream npm package `@qwen-code/qwen-code` (v0.24.7).
-  - Pure JS bundle (`cli-entry.js`).
-  - Installed in `$PREFIX/opt/qwen`, launcher `$PREFIX/bin/qwen` (and alias `qwen-code`).
+  - Upstream npm package: `@qwen-code/qwen-code` (v0.24.7).
+  - Architecture: Pure JS bundle (`cli-entry.js`).
+  - Prefix & Launcher: Installed into isolated prefix `$PREFIX/opt/qwen`, launcher `$PREFIX/bin/qwen` and alias `$PREFIX/bin/qwen-code`.
+  - Native fixes: Injected Termux TLS certs (`SSL_CERT_FILE`) and shebang fixup.
   - Verified on-device: `qwen --help` passed.
 - **Mistral Vibe (`vibe`)**:
-  - Upstream PyPI package `mistral-vibe` (v2.25.8).
-  - Minimal Python coding agent by Mistral AI.
-  - Installed via `pip install mistral-vibe`, launcher `$PREFIX/bin/vibe`.
+  - Upstream PyPI package: `mistral-vibe` (v2.25.8).
+  - Architecture: Minimal Python CLI coding harness by Mistral AI.
+  - Installation & Launcher: `pip install mistral-vibe`, launcher `$PREFIX/bin/vibe`.
+  - Native fixes: Termux shebang fixup and builds cffi/cryptography wheels for Android aarch64.
+  - Manifest & Recipe: [`manifests/vibe.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/vibe.json), [`recipes/vibe-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/vibe-termux.sh).
 - **Nanobot (`nanobot`)**:
-  - Upstream PyPI package `nanobot-ai` (HKUDS).
-  - Lightweight self-hosted personal AI agent + multi-channel gateway (Telegram/Discord/WhatsApp) & MCP.
-  - Installed via `pip install nanobot-ai`, launcher `$PREFIX/bin/nanobot`.
+  - Upstream PyPI package: `nanobot-ai` (HKUDS).
+  - Architecture: Lightweight personal AI agent with multi-channel gateway (Telegram/Discord/WhatsApp) & Claw MCP integration.
+  - Installation & Launcher: `pip install nanobot-ai`, launcher `$PREFIX/bin/nanobot`.
+  - Manifest & Recipe: [`manifests/nanobot.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/nanobot.json), [`recipes/nanobot-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/nanobot-termux.sh).
 - **Cursor CLI (`cursor`, `cursor-agent`)**:
-  - Official Anysphere `linux/arm64` agent bundle (`downloads.cursor.com`).
-  - Bundles glibc native `.node` addons. Runs natively via our `$PREFIX/glibc/lib/ld-linux-aarch64.so.1` loader wrapper.
-  - Installed in `$PREFIX/opt/cursor`, launcher `$PREFIX/bin/cursor` (and alias `cursor-agent`).
+  - Official Anysphere agent package: `linux/arm64` bundle fetched from `downloads.cursor.com/lab/<version>/linux/arm64/agent-cli-package.tar.gz`.
+  - Architecture: Bundles glibc native `.node` addons.
+  - Native loader shim: Runs natively without PRoot via our `$PREFIX/glibc/lib/ld-linux-aarch64.so.1` loader with library path pointing to `$PREFIX/glibc/lib:$PREFIX/lib`.
+  - Prefix & Launcher: Installed in `$PREFIX/opt/cursor`, launcher `$PREFIX/bin/cursor` and symlink `$PREFIX/bin/cursor-agent`.
   - Verified on-device: `cursor -v` -> `2026.09.28-64d2043`.
 - **CLIdeck (`clideck`)**:
-  - Upstream npm package `clideck` (v2.4.0).
-  - Multi-agent parallel terminal web dashboard with mobile relay.
-  - Installed in `$PREFIX/opt/clideck`, launcher `$PREFIX/bin/clideck`.
+  - Upstream npm package: `clideck` (v2.4.0).
+  - Architecture: Web frontend dashboard for multi-agent parallel terminal orchestration with mobile relay.
+  - Prefix & Launcher: Installed into isolated prefix `$PREFIX/opt/clideck`, launcher `$PREFIX/bin/clideck`.
+  - Native fixes: Builds on-device Bionic `node-pty` with Termux clang.
   - Verified on-device: `clideck --help` passed.
+- **Roo Code CLI Status**:
+  - Upstream Roo Code VS Code extension repository was archived in May 2026.
+  - Active open-source fork/continuation is Cline CLI (`cline`), which is already in-tree, configured, and verified.
 
 ## 2026-09-30 — Added Kilo Code, Command Code, and GitHub Copilot CLI to installer hub
 
 - **Kilo Code (`kilo`, `kilocode`)**:
-  - Upstream publishes `@kilocode/cli-linux-arm64-musl` with native aarch64 musl binary.
-  - Linked against musl and libstdc++. Recipe uses Alpine musl runtime in `$PREFIX/lib/musl/` (`ld-musl-aarch64.so.1`, `libstdc++.so.6`, `libgcc_s.so.1`) and patches interpreter and rpath.
-  - Installed into `$PREFIX/opt/kilo` with wrapper launcher `$PREFIX/bin/kilo` (and symlink `kilocode`).
-  - Verified on-device: `kilo --version` -> `7.8.1`, smoke test / help menus passed.
+  - Upstream publishes `@kilocode/cli-linux-arm64-musl` containing a compiled aarch64 musl binary.
+  - Linked against musl and libstdc++. Recipe downloads/verifies Alpine musl runtime in `$PREFIX/lib/musl/` (`ld-musl-aarch64.so.1`, `libstdc++.so.6`, `libgcc_s.so.1`) and uses `patchelf --set-interpreter` and `patchelf --set-rpath` to bind them without glibc overhead.
+  - Installed into `$PREFIX/opt/kilo` with launcher wrapper `$PREFIX/bin/kilo` and symlink `$PREFIX/bin/kilocode`.
+  - Verified on-device: `kilo --version` -> `7.8.1`, smoke test passed.
 - **Command Code (`command-code`, `commandcode`, `cmdc`)**:
   - Upstream npm package `command-code` (v1.73.0).
-  - Contains bin name `cmd` which collides with Termux's system `$PREFIX/bin/cmd` wrapper.
+  - Collision mitigation: Upstream npm bin is named `cmd`, which conflicts directly with Termux's system `$PREFIX/bin/cmd` wrapper.
   - Recipe installs into isolated prefix `$PREFIX/opt/command-code` and exports `command-code`, `commandcode`, and `cmdc` launchers without clobbering system `cmd`.
   - Verified on-device: `command-code --help` and `cmdc --help` passed.
 - **GitHub Copilot CLI (`copilot`)**:
   - Official GitHub Copilot in the CLI via native `gh copilot` engine.
-  - Recipe verifies `gh` dependency and exports `$PREFIX/bin/copilot` launcher.
+  - Recipe verifies `gh` package dependency and exports launcher wrapper `$PREFIX/bin/copilot`.
   - Verified on-device: `copilot --help` passed.
 
 ## 2026-09-30 — 9router machine-id Termux runtime patch & installer automation
