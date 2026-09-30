@@ -14,7 +14,10 @@
   - Upstream npm package: `@rhobot-dev/rho` (v0.1.12 by Mikey O'Brien).
   - Architecture: Persistent always-on AI operator built on top of the Pi coding agent ecosystem.
   - Features: Persistent memory observability across sessions, local-first state, background heartbeat check-ins, CLI + local Web UI + Telegram worker.
-  - Native fixes: Extracted into `$PREFIX/opt/rho`, symlinked top-level `node_modules` for `tsx/esm` registration, launcher wrapper at `$PREFIX/bin/rho`.
+  - Native compilation & fixes:
+    - `koffi` (v2.16.3): Built natively from source for `android_arm64` using `cnoke.js` + `cmake` + Termux Clang 21 without glibc.
+    - `node-pty` (v1.1.0): Built natively using `node-gyp` + Python 3.14 + Bionic toolchain targeting Android API level 24 (`pty.node`).
+    - Extracted tarball into `$PREFIX/opt/rho`, symlinked top-level `node_modules` for `tsx/esm` registration, launcher wrapper at `$PREFIX/bin/rho`.
   - Recipe: [`recipes/rho-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/rho-termux.sh), Manifest: [`manifests/rho.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/rho.json).
   - Verified on-device: `rho --help` passed.
 - **DroidClaw / Kira (`kira`, `droidclaw`)**:
