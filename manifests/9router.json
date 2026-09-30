@@ -1,0 +1,14 @@
+{
+  "name": "9router",
+  "version": "0.5.91",
+  "category": "routing",
+  "recipe": "node-shebang",
+  "recipe_script": "9router-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/9router/-/9router-0.5.91.tgz"
+  },
+  "deps": ["nodejs", "curl", "tar"],
+  "post_install": "9router --version",
+  "notes": "AI model router with smart fallback and OpenAI-compatible endpoint. Configured for port 20129 to avoid collision with OmniRoute (20128).",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

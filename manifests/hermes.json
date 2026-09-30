@@ -5,7 +5,7 @@
   "recipe": "custom-script",
   "recipe_script": "hermes-termux.sh",
   "source": {
-    "url": "https://github.com/therealfreddied/openclaw-lean/releases/download/v0.19.0-termux/hermes-termux-aarch64.tar.gz",
+    "url": "https://github.com/therealfreddied/termux-harness-tui/releases/download/hermes-0.19.0-termux/hermes-termux-aarch64.tar.gz",
     "sha256": "6a720499a8d68eb62e96b050991f1f712ecc715e47907de56a8731c7b767bc5f",
     "size_mb": 9.61
   },

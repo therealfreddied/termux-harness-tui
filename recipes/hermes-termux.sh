@@ -2,7 +2,7 @@
 # hermes-termux.sh — install cross-compiled Hermes Agent on Termux (aarch64)
 set -euo pipefail
 
-URL="https://github.com/therealfreddied/openclaw-lean/releases/download/v0.19.0-termux/hermes-termux-aarch64.tar.gz"
+URL="https://github.com/therealfreddied/termux-harness-tui/releases/download/hermes-0.19.0-termux/hermes-termux-aarch64.tar.gz"
 EXPECTED_SHA="6a720499a8d68eb62e96b050991f1f712ecc715e47907de56a8731c7b767bc5f"
 TMP_DIR="$PREFIX/tmp/opencode/hermes-install"
 

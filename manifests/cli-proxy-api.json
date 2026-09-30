@@ -1,0 +1,16 @@
+{
+  "name": "cli-proxy-api",
+  "version": "8.0.4",
+  "category": "routing",
+  "recipe": "prefab-android",
+  "recipe_script": "cli-proxy-api-termux.sh",
+  "source": {
+    "url": "https://github.com/therealfreddied/termux-harness-tui/releases/download/cli-proxy-api-8.0.4-termux/cli-proxy-api-8.0.4-termux-aarch64.tar.gz",
+    "sha256": "0782653b54e4a83adbe1480e49d6ad980a0d396fb0400caf06b51aab9a8ba187",
+    "size_mb": 23.18
+  },
+  "deps": ["curl", "tar"],
+  "post_install": "cli-proxy-api -v",
+  "notes": "Proxies CLI authentication and sessions into OpenAI-compatible API endpoints. Native Go aarch64 build for Termux/Bionic.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

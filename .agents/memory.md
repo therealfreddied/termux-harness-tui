@@ -1,5 +1,18 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — routing manifests + our own prebuilt releases hosted on GitHub
+
+- Hosted `cli-proxy-api-8.0.4-termux-aarch64.tar.gz` and `hermes-termux-aarch64.tar.gz`
+  directly on GitHub releases under `therealfreddied/termux-harness-tui`.
+- Pinned SHA256 hashes:
+  - `cli-proxy-api`: `0782653b54e4a83adbe1480e49d6ad980a0d396fb0400caf06b51aab9a8ba187`
+  - `hermes`: `6a720499a8d68eb62e96b050991f1f712ecc715e47907de56a8731c7b767bc5f`
+- Added `manifests/cli-proxy-api.json` and `recipes/cli-proxy-api-termux.sh`.
+- Added `manifests/9router.json` and `recipes/9router-termux.sh` (port 20129 override
+  configured in launcher to prevent port collision with OmniRoute on 20128).
+- Updated `manifests/hermes.json` and `recipes/hermes-termux.sh` to fetch from the
+  central `therealfreddied/termux-harness-tui` release.
+
 ## 2026-09-30 — prebuilt-verdict round: platform-giants are thin recipes now
 
 Authoritative detail: `notes/WORKLOG.md` (top entry). Repo pushed @ `b4088c6`.
