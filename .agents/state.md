@@ -32,7 +32,7 @@ cline, bwb, pentestcode, routing CLIs.
 | Repo | updated with all manifests, recipes, doctor checks & memory | sdcard path / GitHub master |
 | **Platform Giants** | **ALL DONE** — claude (musl loader), copilot, cursor (glibc loader), gemini, grok, kimi (Bionic node-pty), qwen (verified), vibe (PyPI), codex, pi | manifests+recipes in-tree |
 | **Open Engines** | **ALL INTEGRATED** — opencode 1.18.31 (DO-NOT-TOUCH), cline 3.0.61, kilo 7.8.1 (musl loader), command-code 1.73.0 (isolated prefix) | manifests+recipes in-tree |
-| **Claw Fleet** | **6 AGENTS + TOOLING** — openclaw, zeroclaw (native), picoclaw (static), microclaw, ironclaw, nanobot (PyPI + MCP) | manifests+recipes in-tree |
+| **Claw Fleet** | **9 AGENTS + TOOLING** — openclaw, zeroclaw (native), picoclaw (static), microclaw, ironclaw, nanobot (PyPI), nullclaw (native Zig), rho (always-on Pi operator), droidclaw/kira (native Android agent) | manifests+recipes in-tree |
 | **dsh (DeepSeek)** | INSTALLED + VERIFIED — community prebuilt, 318 MB, `dsh web` HTTP 200 | `$PREFIX/opt/dsh`, launcher `$PREFIX/bin/dsh` |
 | **hermes** | INSTALLED + works — sha256-pinned prebuilt hosted on `therealfreddied/termux-harness-tui` release | `manifests/hermes.json`, `recipes/hermes-termux.sh` |
 | **Routing & Frontends** | **ALL 4 INTEGRATED** — `clideck` (multi-agent web UI), `cli-proxy-api`, `9router` (patched machine-id), `omniroute` | manifests + recipes in-tree |

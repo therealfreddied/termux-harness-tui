@@ -1,0 +1,14 @@
+{
+  "name": "droidclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "custom-script",
+  "recipe_script": "droidclaw-termux.sh",
+  "source": {
+    "url": "https://github.com/levilyf/droidclaw"
+  },
+  "deps": ["nodejs", "git", "curl"],
+  "post_install": "kira --help",
+  "notes": "DroidClaw (Kira) is a native Android autonomous phone agent that runs directly in Termux. Perceives screen, interacts with apps (tapping, typing, swiping), and handles notifications and hardware settings via Termux-API and accessibility services without root.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (bin/kira + src/index.js wizard)"
+}

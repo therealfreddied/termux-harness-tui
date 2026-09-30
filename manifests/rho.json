@@ -1,0 +1,14 @@
+{
+  "name": "rho",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "npm-global",
+  "recipe_script": "rho-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@rhobot-dev/rho"
+  },
+  "deps": ["nodejs", "npm"],
+  "post_install": "rho --help",
+  "notes": "Rho is an always-on persistent AI operator built on the Pi coding agent ecosystem by Mikey O'Brien. Features persistent memory across sessions, local-first state, background heartbeat check-ins, CLI + Web UI + Telegram/email integrations.",
+  "verified_on": "2026-09-30 SM-S911W aarch64"
+}

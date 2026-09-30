@@ -34,6 +34,9 @@ bash recipes/doctor.sh        # health check (works standalone)
 | `cline` | 3.0.61 | custom-script | bun-termux wrapper + glibc |
 | `grok` | 1.0.41 | bionic-rust | Duro02 port, sha256-verified |
 | `dsh` | 0.1.0-rc.7-termux.1 | prebuilt-tarball | Vengisk port, 318MB, `dsh web` HTTP 200 |
+| `nullclaw` | latest | **native-zig** | ultra-lightweight static binary (~678KB, ~1MB RAM, <2ms boot) |
+| `rho` | 0.1.12 | node-runner | always-on persistent AI operator on Pi ecosystem (@rhobot-dev/rho) |
+| `kira` / `droidclaw` | 0.1.0 | native-node | native Android phone automation agent inside Termux (levilyf/droidclaw) |
 | `bwb` | 4.0.1 | npm-tarball | MCP stdio, 26 tools verified |
 | `pentestcode` | 0.2.6 | **musl-shim** | Alpine musl loader + libstdc++ |
 | `cli-proxy-api` | 8.0.4 | go-android | on-device Go 1.27 rebuild |

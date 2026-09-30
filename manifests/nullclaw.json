@@ -1,0 +1,14 @@
+{
+  "name": "nullclaw",
+  "version": "latest",
+  "category": "claw-fleet",
+  "recipe": "prefab-android",
+  "recipe_script": "nullclaw-termux.sh",
+  "source": {
+    "url": "https://github.com/nullclaw/nullclaw/releases/latest"
+  },
+  "deps": ["curl"],
+  "post_install": "nullclaw --version",
+  "notes": "NullClaw is an ultra-lightweight autonomous AI agent runtime written entirely in Zig. Single static binary (~678 KB, ~1 MB RAM footprint, <2 ms boot), zero dependencies, multi-channel (Telegram, Discord, Slack) and multi-LLM provider support.",
+  "verified_on": "2026-09-30 SM-S911W aarch64 (nullclaw-android-aarch64.bin)"
+}

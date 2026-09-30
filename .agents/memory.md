@@ -1,5 +1,30 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — Added NullClaw, Rho, and Kira (DroidClaw) to Claw Fleet
+
+- **NullClaw (`nullclaw`)**:
+  - Upstream release: `nullclaw/nullclaw` (CalVer `v2026.5.29`).
+  - Architecture: Ultra-lightweight autonomous AI assistant runtime written in **Zig**.
+  - Binary: Single static aarch64 binary (`nullclaw-android-aarch64.bin`), ~678 KB binary size, ~1 MB memory footprint, <2 ms startup.
+  - Zero runtime dependencies (no Python/Node/glibc requirement).
+  - Multi-provider LLMs (OpenAI, Anthropic, Ollama, Groq), multi-channel messaging (Telegram, Discord, Slack), and sandboxing.
+  - Recipe: [`recipes/nullclaw-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/nullclaw-termux.sh), Manifest: [`manifests/nullclaw.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/nullclaw.json).
+  - Verified on-device: `nullclaw --version` -> `nullclaw 2026.5.29`.
+- **Rho (`rho`)**:
+  - Upstream npm package: `@rhobot-dev/rho` (v0.1.12 by Mikey O'Brien).
+  - Architecture: Persistent always-on AI operator built on top of the Pi coding agent ecosystem.
+  - Features: Persistent memory observability across sessions, local-first state, background heartbeat check-ins, CLI + local Web UI + Telegram worker.
+  - Native fixes: Extracted into `$PREFIX/opt/rho`, symlinked top-level `node_modules` for `tsx/esm` registration, launcher wrapper at `$PREFIX/bin/rho`.
+  - Recipe: [`recipes/rho-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/rho-termux.sh), Manifest: [`manifests/rho.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/rho.json).
+  - Verified on-device: `rho --help` passed.
+- **DroidClaw / Kira (`kira`, `droidclaw`)**:
+  - Upstream repository: `levilyf/droidclaw` (v0.1.0).
+  - Architecture: Native Android autonomous phone agent specifically created to run inside Termux.
+  - Features: Controls Android UI (screen reading, tapping, typing, scrolling), notification handling, hardware control via Termux-API and accessibility services without root.
+  - Native fixes: Installed in `$PREFIX/opt/droidclaw`, linked `$HOME/droidclaw`, launcher wrapper at `$PREFIX/bin/kira` (and symlink `droidclaw`).
+  - Recipe: [`recipes/droidclaw-termux.sh`](file:///storage/emulated/0/LLM/termux-harness-tui/recipes/droidclaw-termux.sh), Manifest: [`manifests/droidclaw.json`](file:///storage/emulated/0/LLM/termux-harness-tui/manifests/droidclaw.json).
+  - Verified on-device: `kira --help` and initial setup wizard verified.
+
 ## 2026-09-30 — Added Kimi Code, Qwen Code, Mistral Vibe, Nanobot, Cursor CLI, and CLIdeck
 
 - **Kimi Code (`kimi`)**:
