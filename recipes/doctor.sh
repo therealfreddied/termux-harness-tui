@@ -12,7 +12,7 @@ printf "%-22s %s\n" "free RAM:" \
 printf "%-22s %s\n" "free disk:" "$(df -h /data | awk 'NR==2{print $4}')"
 echo
 echo "-- installed harnesses --"
-for c in claude opencode codex openclaude agy antigravity cline grok dsh; do
+for c in claude opencode codex openclaude agy antigravity cline grok dsh hermes bwb pentestcode cli-proxy-api 9router; do
   p="$PREFIX/bin/$c"
   if [ -e "$p" ]; then
     printf "%-12s %s\n" "$c" "$(command -v "$c")"
