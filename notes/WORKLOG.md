@@ -1,5 +1,24 @@
 # Termux Harness TUI — Working Notes
 
+## Claude Code Musl Route Upgrade (2026-09-30)
+
+Upgraded Claude Code installer from the heavy `gtbuchanan` glibc loader (~449MB)
+to `Aarstad/claude-code-termux-musl` (723KB Alpine musl loader + official Anthropic
+linux-arm64-musl binary):
+
+- **Key Improvements**:
+  - Drops requirement for `glibc-repo` and `glibc-runner`.
+  - Fixes `/proc/self/exe` integrity (previously pointed to `glibc-runner`, causing
+    `CLAUDE_CODE_EXECPATH` and sub-process grep/find shims to fail).
+  - Bionic-native HTTP proxy (`termux-http-proxy.c`) handles DNS lookups via Android's
+    async resolver with loopback token security (`--auth-file`).
+- **Verified On-Device**:
+  - `claude --version`: `2.1.286 (Claude Code)`
+  - `claude doctor`: `Running: native (2.1.286)`, platform `linux-arm64`, bundled search OK.
+  - Doctor check (`recipes/doctor.sh`) passes.
+- **Recipe & Manifest Updated**:
+  - `recipes/claude-termux.sh` and `manifests/claude.json` updated to the musl route.
+
 ## Routing Layer Manifests & Prebuilt Hosting Round (2026-09-30)
 
 Authoritative detail for routing integration and self-hosted GitHub releases:

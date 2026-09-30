@@ -30,7 +30,7 @@ cline, bwb, pentestcode, routing CLIs.
 | Piece | State | Location |
 |---|---|---|
 | Repo | updated with routing manifests & prebuilt releases | sdcard path / GitHub master |
-| **Platform Giants** | **ALL 5 DONE** — claude 2.1.285 (glibc loader), codex 0.156.1 (@mmmbuto npm), gemini 0.46.0, pi 0.99.1, grok | manifests+recipes committed `619847b` |
+| **Platform Giants** | **ALL 5 DONE** — claude 2.1.286 (musl loader, 723KB, verified), codex 0.156.1 (@mmmbuto npm), gemini 0.46.0, pi 0.99.1, grok | manifests+recipes updated & in-tree |
 | **dsh (DeepSeek)** | INSTALLED + VERIFIED — community prebuilt, 318 MB, `dsh web` HTTP 200 | `$PREFIX/opt/dsh`, launcher `$PREFIX/bin/dsh` |
 | **hermes** | INSTALLED + works — sha256-pinned prebuilt hosted on `therealfreddied/termux-harness-tui` release | `manifests/hermes.json`, `recipes/hermes-termux.sh` |
 | **Routing Layer** | **ALL 3 INTEGRATED** — `cli-proxy-api` (hosted prebuilt), `9router` (npm tarball, port 20129), `omniroute` | manifests + recipes in-tree |
@@ -54,9 +54,9 @@ explicit path only — never `git add -A`.
   opencode (bd-loser/opencode-bionic .deb same-day — NOT used, install is
   DO-NOT-TOUCH), agy (wallentx, native Bionic NDK r27d), openclaude
   (@gitlawb npm), grok (Duro02), dsh (Vengisk), cline (bun+glibc, works).
-- **Tier 3 none**: claude-code (no android-arm64 upstream, gh #72620 →
-  gtbuchanan glibc-loader launcher ACCEPTED by user: stable+fast), goose
-  (glibc only; aaif fork has musl tarball), openclaw (glibc-ld.so installer).
+- **Tier 3 none**: claude-code (official linux-arm64-musl binary + Aarstad
+  723KB musl loader, verified 2.1.286), goose (glibc only; aaif fork has
+  musl tarball), openclaw (glibc-ld.so installer).
 - **agy = antigravity**: same binary; `antigravity` is a symlink to `agy`.
 
 ## NEXT actions (in order, do not reorder)

@@ -1,15 +1,29 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# claude-termux.sh — install Claude Code via gtbuchanan/claude-code-termux.
-# Anthropic publishes no android-arm64 binary (gh issue #72620), so this
-# launcher enables the glibc package repo, downloads Anthropic's official
-# linux-arm64 build and ELF-patches it for the glibc loader. Accepted route:
-# stable and fast on this device (claude 2.1.285 verified 2026-09-30).
-# Update path: the launcher self-manages versions in ~/.local/share/claude.
+# claude-termux.sh — install official Claude Code via musl loader (Aarstad/claude-code-termux-musl).
+#
+# Runs Anthropic's official linux-arm64-musl build natively on Bionic with a 723KB
+# Alpine musl loader (no 449MB glibc-runner required).
+# Preserves /proc/self/exe integrity for sub-process tools, and routes network DNS
+# through a lightweight single-threaded C proxy (termux-http-proxy).
+#
+# Update path: claude-musl-update
 set -euo pipefail
 log() { printf '\033[38;5;161m==>\033[0m %s\n' "$*"; }
 
-log "running gtbuchanan/claude-code-termux installer..."
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/gtbuchanan/claude-code-termux/main/install.sh)"
+TMP_DIR="$PREFIX/tmp/opencode/claude-musl-install"
+mkdir -p "$TMP_DIR"
+
+log "fetching Aarstad/claude-code-termux-musl installer..."
+if [ -d "$TMP_DIR/repo/.git" ]; then
+  git -C "$TMP_DIR/repo" pull --ff-only
+else
+  rm -rf "$TMP_DIR/repo"
+  git clone --depth 1 https://github.com/Aarstad/claude-code-termux-musl.git "$TMP_DIR/repo"
+fi
+
+log "running musl installer (promotes to $PREFIX/bin/claude)..."
+cd "$TMP_DIR/repo"
+bash ./install.sh --promote
 
 log "verifying..."
 command -v claude >/dev/null 2>&1 || { echo "FATAL: claude not on PATH after install" >&2; exit 1; }

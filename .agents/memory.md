@@ -1,5 +1,16 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — Claude Code upgraded to musl loader (723KB, no glibc runtime)
+
+- Migrated from `gtbuchanan` glibc loader (~449MB) to `Aarstad/claude-code-termux-musl`.
+- Technical details:
+  - Uses Anthropic's official `linux-arm64-musl` build.
+  - Patches ELF interpreter with `patchelf` to `$PREFIX/lib/ld-musl-aarch64.so.1` (723KB).
+  - Preserves `/proc/self/exe` integrity (resolves sub-process re-exec failure under glibc-runner).
+  - Resolves Android DNS through a single-threaded Bionic C proxy (`termux-http-proxy.c`) with loopback `--auth-file` token protection.
+- Verified on device: `claude 2.1.286` (Claude Code) + `claude doctor` clean.
+- Manifest `manifests/claude.json` and recipe `recipes/claude-termux.sh` updated.
+
 ## 2026-09-30 — routing manifests + our own prebuilt releases hosted on GitHub
 
 - Hosted `cli-proxy-api-8.0.4-termux-aarch64.tar.gz` and `hermes-termux-aarch64.tar.gz`
