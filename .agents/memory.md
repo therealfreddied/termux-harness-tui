@@ -1,5 +1,54 @@
 # memory.md — Termux Harness TUI (persistent knowledge, append-only)
 
+## 2026-09-30 — prebuilt-verdict round: platform-giants are thin recipes now
+
+Authoritative detail: `notes/WORKLOG.md` (top entry). Repo pushed @ `b4088c6`.
+
+### The verdict (researched, not guessed)
+
+Question: which harnesses have quality upstream prebuilts that work on Bionic?
+- **Official first-party**: pi (pi.dev has real Termux docs — npm
+  `--ignore-scripts`, no native modules), gemini-cli (pure JS), aider (PyPI).
+  hermes: NousResearch runs a signed Termux APT repo but their docs currently
+  banner "Termux broken, fix in progress" — meanwhile OUR OWN prebuilt
+  (`therealfreddied/openclaw-lean v0.19.0-termux`, sha256-pinned) is the
+  working route and the user confirmed it works fine.
+- **Quality community prebuilts**: codex = `@mmmbuto/codex-cli-termux`
+  (republishes upstream as X.Y.Z-termux.N, 6 days behind), opencode =
+  `bd-loser/opencode-bionic` (.deb built from same-day upstream tags —
+  best-tracking Bionic build in the ecosystem, but NOT used: install is
+  DO-NOT-TOUCH), agy = wallentx (native Bionic NDK r27d, self-updating),
+  openclaude = `@gitlawb` npm, grok = Duro02 tarball, dsh = Vengisk.
+- **No prebuilt**: claude-code (no android-arm64 upstream, gh #72620; user
+  ACCEPTED the gtbuchanan glibc-loader route because it is stable and fast —
+  shim quality can substitute for a prebuilt), goose (glibc only; aaif fork
+  ships a musl tarball — future option), openclaw (glibc-ld.so installer).
+
+### What was built (commit `619847b`)
+
+Thin recipes + manifests for all four platform-giants:
+`recipes/{codex,gemini,pi,claude}-termux.sh` + `manifests/{codex,gemini,pi,claude}.json`.
+Pattern: npm install -g → `termux-fix-shebang` → verify. Claude runs the
+gtbuchanan installer instead (glibc loader, launcher self-manages versions).
+
+### Key discoveries worth keeping
+
+- **gemini + pi were installed-but-broken**: npm bin stubs keep
+  `#!/usr/bin/env`, which Bionic lacks → "bad interpreter". One
+  `termux-fix-shebang` fixed both on-device (gemini 0.46.0, pi 0.99.1).
+  For pure-JS npm harnesses, that one-liner IS the whole Termux recipe.
+- **`latest_of()` in `bin/harness-hub` had a real bug**: its sed only
+  captured the npm scope (`@google`), so the "npm latest is" badge silently
+  never rendered for scoped packages. Fixed to capture `@scope/pkg` (accepts
+  raw and %2f-encoded URL forms). Verified live against 3 registries.
+- **agy vs antigravity**: same binary; `$PREFIX/bin/antigravity` is a symlink
+  to `$PREFIX/bin/agy`. Hub listing now says "deepseek" not "dsh" (user
+  preference: product names lowercase, `8738f26` + `b4088c6`).
+- Freshness check method that worked: `curl registry.npmjs.org/<pkg>` and
+  GitHub API releases, compare dist-tags vs upstream. aaif-goose has
+  `goose-aarch64-unknown-linux-musl` tarballs (v1.52.0) — a musl-loader route
+  for goose exists if ever wanted.
+
 ## 2026-09-30 — dsh: use the community pre-patched build, not our own layer
 
 Authoritative detail: `notes/DSH-TERMUX.md` + `notes/WORKLOG.md`.
