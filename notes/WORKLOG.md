@@ -1,5 +1,28 @@
 # Termux Harness TUI — Working Notes
 
+## Routing Layer Manifests & Prebuilt Hosting Round (2026-09-30)
+
+Authoritative detail for routing integration and self-hosted GitHub releases:
+
+- **Prebuilt Releases Hosted on GitHub (`therealfreddied/termux-harness-tui`)**:
+  - `cli-proxy-api-8.0.4-termux`: `cli-proxy-api-8.0.4-termux-aarch64.tar.gz` (23MB)
+    - SHA256: `0782653b54e4a83adbe1480e49d6ad980a0d396fb0400caf06b51aab9a8ba187`
+    - Native Bionic Go aarch64 build for Termux.
+  - `hermes-0.19.0-termux`: `hermes-termux-aarch64.tar.gz` (9.6MB)
+    - SHA256: `6a720499a8d68eb62e96b050991f1f712ecc715e47907de56a8731c7b767bc5f`
+    - Centralized from openclaw-lean to termux-harness-tui release tree.
+- **Routing Manifests & Recipes (Category 7)**:
+  - `manifests/cli-proxy-api.json` + `recipes/cli-proxy-api-termux.sh`: downloads GitHub release tarball, verifies SHA256, installs to `$PREFIX/lib/cliproxyapi/`, creates `$PREFIX/bin/cli-proxy-api` link.
+  - `manifests/9router.json` + `recipes/9router-termux.sh`: pure-JS npm tarball installer to `$PREFIX/lib/9router/`, creates launcher with `--port 20129 --no-browser --skip-update` to avoid collision with OmniRoute (20128).
+  - `manifests/omniroute.json` + `recipes/omniroute-termux.sh`: existing source/VPS-build integration.
+- **Branch Synchronization & Claw Fleet**:
+  - Verified all Claw Fleet manifests (`openclaw`, `zeroclaw`, `picoclaw`, `ironclaw`, `microclaw`, `nanoclaw`), recipes, and `notes/CLAW-FLEET.md` are in git tree.
+  - Pushed `master` and synced `main` branch to remote `origin`.
+- **Validation**:
+  - All JSON manifests validated with `jq`.
+  - `bin/harness-hub` renders Category 7 (Routing) with 9router, cli-proxy-api, and omniroute.
+  - `recipes/doctor.sh` health check passes for all 14 tools.
+
 ## Prebuilt-verdict round: thin recipes for platform-giants (2026-09-30)
 
 Follow-up to the "which harnesses have quality upstream prebuilts" research.

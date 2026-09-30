@@ -1,6 +1,6 @@
 # state.md — Termux Harness TUI (live status)
 
-Updated: 2026-09-30, evening (after platform-giants thin-recipe round + push)
+Updated: 2026-09-30, late evening (after routing layer integration & prebuilt releases)
 
 ## PROJECT LOCATION (exact, next agent start here)
 
@@ -8,8 +8,8 @@ Updated: 2026-09-30, evening (after platform-giants thin-recipe round + push)
 /storage/emulated/0/LLM/termux-harness-tui/
 ```
 
-- This is THE project: git repo, branch `master`, pushed to
-  https://github.com/therealfreddied/termux-harness-tui (commit `b4088c6`).
+- This is THE project: git repo, branches `master` and `main` in sync, pushed to
+  https://github.com/therealfreddied/termux-harness-tui.
 - Lives on sdcard/FUSE: no exec bits, no file locks. Run scripts with
   `bash <script>`, never `./<script>`. Git needs `safe.directory`.
 - Clone with `git clone https://github.com/therealfreddied/termux-harness-tui.git`
