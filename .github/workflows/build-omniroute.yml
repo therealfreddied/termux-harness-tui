@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
     steps:
       - name: Checkout termux-harness-tui
         uses: actions/checkout@v4
@@ -22,7 +25,7 @@ jobs:
 
       - name: Clone OmniRoute Source
         run: |
-          git clone --depth 1 -b "release/v${{ inputs.version }}" https://github.com/diegosouzapw/OmniRoute.git ~/omniroute-src
+          git clone --depth 1 -b "release/v${{ inputs.version }}" https://github.com/diegosouzapw/OmniRoute.git /home/runner/omniroute-src
 
       - name: Install Dependencies
         working-directory: /home/runner/omniroute-src
@@ -34,7 +37,9 @@ jobs:
         run: |
           rm -rf .build dist
           export NODE_OPTIONS="--max-old-space-size=12288"
-          OMNIROUTE_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs
+          export OMNIROUTE_BUILD_BACKEND_ONLY=1
+          export JWT_SECRET="ci-build-token-placeholder-32-chars-long"
+          node scripts/build/build-next-isolated.mjs
           if [ ! -f dist/server.js ] && [ -d .build/next/standalone ]; then
             mkdir -p dist
             cp -a .build/next/standalone/. dist/
