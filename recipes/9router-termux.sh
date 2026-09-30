@@ -18,6 +18,38 @@ log "extracting to $DEST_DIR..."
 mkdir -p "$DEST_DIR"
 tar -xzf "$TMP_DIR/9router.tgz" --strip-components=1 -C "$DEST_DIR"
 
+log "ensuring persistent machine-id in ~/.9router/machine-id..."
+mkdir -p "$HOME/.9router"
+if [ ! -f "$HOME/.9router/machine-id" ]; then
+  if [ -r /proc/sys/kernel/random/boot_id ]; then
+    cat /proc/sys/kernel/random/boot_id > "$HOME/.9router/machine-id"
+  else
+    head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n' > "$HOME/.9router/machine-id"
+  fi
+  chmod 600 "$HOME/.9router/machine-id" 2>/dev/null || true
+fi
+
+log "patching $DEST_DIR/src/cli/api/client.js for Android/Termux machine-id..."
+node - "$DEST_DIR" <<'EOF'
+const fs = require('fs');
+const path = require('path');
+const p = path.join(process.argv[2], 'src', 'cli', 'api', 'client.js');
+if (fs.existsSync(p)) {
+  let src = fs.readFileSync(p, 'utf8');
+  // 1. Remove unconditional top-level require("node-machine-id")
+  src = src.replace(/const\s*\{\s*machineIdSync\s*\}\s*=\s*require\(["']node-machine-id["']\);?\r?\n?/, '');
+  // 2. Wrap lookup inside loadRawMachineId with safe lazy require
+  if (!src.includes('const { machineIdSync } = require("node-machine-id");')) {
+    src = src.replace(
+      /try\s*\{\s*return\s+machineIdSync\(\);\s*\}\s*catch\s*\{\s*return\s+["']["'];\s*\}/,
+      `try {\n    const { machineIdSync } = require("node-machine-id");\n    return machineIdSync();\n  } catch {\n    return "";\n  }`
+    );
+  }
+  fs.writeFileSync(p, src);
+  console.log('src/cli/api/client.js patched for Termux runtime');
+}
+EOF
+
 log "creating launcher -> $BIN (port 20129 to avoid OmniRoute collision)..."
 cat > "$BIN" << 'EOF'
 #!/data/data/com.termux/files/usr/bin/bash

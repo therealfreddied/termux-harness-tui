@@ -17,14 +17,14 @@ bash recipes/doctor.sh        # health check (works standalone)
 
 | Command | Version | Recipe | Note |
 |---|---|---|---|
-| `claude` | 2.1.285 | glibc loader | official native build |
+| `claude` | 2.1.286 | **musl-loader** | official `linux-arm64-musl` build, 723KB loader |
 | `opencode` | 1.18.31 | glibc + DNS shim | DO NOT TOUCH (primary driver) |
 | `codex` | 0.156.1 | node-shebang | `@mmmbuto/codex-cli-termux` |
 | `openclaude` | 0.31.0 | node-shebang | `termux-fix-shebang` |
 | `agy` / `antigravity` | 1.2.14 | twin-binary | `wallentx/antigravity-cli-termux` |
 | `cline` | 3.0.61 | custom-script | bun-termux wrapper + glibc |
 | `grok` | 1.0.41 | bionic-rust | Duro02 port, sha256-verified |
-| `dsh` | mini 0.1.12 | single-file | 7.7MB, Node 24, zero native deps |
+| `dsh` | 0.1.0-rc.7-termux.1 | prebuilt-tarball | Vengisk port, 318MB, `dsh web` HTTP 200 |
 | `bwb` | 4.0.1 | npm-tarball | MCP stdio, 26 tools verified |
 | `pentestcode` | 0.2.6 | **musl-shim** | Alpine musl loader + libstdc++ |
 | `cli-proxy-api` | 8.0.4 | go-android | on-device Go 1.27 rebuild |
