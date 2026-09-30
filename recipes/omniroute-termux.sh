@@ -15,6 +15,27 @@ VARIANT="${1:-lite}"
 SRC_URL="https://github.com/diegosouzapw/OmniRoute.git"
 
 log() { printf '\e[38;5;161m==>\e[0m %s\n' "$*"; }
+die() { printf '\033[31mFATAL:\033[0m %s\n' "$*" >&2; exit 1; }
+
+# ── HARD BLOCK: never build the full dashboard on this device ────────────────
+# The Next.js dashboard compile asks for a 2GB heap and then thrashes swap on
+# a 7GB phone until the kernel OOM-killer picks a victim. It does not fail, it
+# wedges the whole device — do not run it here, do not "try it with more swap".
+# Use `lite` on-device, or build `full` on a VPS (recipes/vps/build-omniroute.sh)
+# and rsync dist/ + app/ across.
+if [ "$VARIANT" = "full" ]; then
+  if [ "${OMNIROUTE_ALLOW_FULL_ON_DEVICE:-0}" != "1" ]; then
+    die "refusing to run the 'full' OmniRoute build on Termux — it will hang the device.
+     On-device variant is 'lite' (backend only):
+         bash \"\$(dirname \"\$0\")/omniroute-termux.sh\" lite
+     For the dashboard, cross-build it:
+         bash \"\$(dirname \"\$0\")/vps/build-omniroute.sh\"   # on the VPS
+     Override is deliberately possible but only if you know what you are doing:
+         OMNIROUTE_ALLOW_FULL_ON_DEVICE=1 bash omniroute-termux.sh full"
+  fi
+  log "WARNING: OMNIROUTE_ALLOW_FULL_ON_DEVICE=1 set — proceeding with the full build."
+  log "WARNING: close every other app first. This can take longer than you expect."
+fi
 
 # 0. deps
 for pkg in nodejs clang make python pkg-config; do

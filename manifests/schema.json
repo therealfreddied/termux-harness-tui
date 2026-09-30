@@ -22,6 +22,10 @@
       "enum": ["glibc-bun", "bionic-rust", "node-shebang", "twin-binary", "python-cffi", "custom-script"],
       "description": "Which recipes/<name>/install.sh to run"
     },
+    "recipe_script": {
+      "type": "string",
+      "description": "Recipe file under recipes/ that installs this harness, e.g. 'dsh-termux.sh'. Defaults to '<name>-termux.sh' when omitted."
+    },
     "source": {
       "type": "object",
       "required": ["url"],

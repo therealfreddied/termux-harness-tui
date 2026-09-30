@@ -29,7 +29,7 @@ Status: RESEARCH / PLANNING — nothing published, nothing wired up yet.
 | agy (antigravity) | 1.2.14 | `wallentx/antigravity-cli-termux` curl\|sh (twin binary agy + agy.va39) | works |
 | cline | 3.0.61 | `gamihardik2009-crypto/cline-termux` install.sh (bun-termux wrapper + glibc) | works, just installed |
 | grok-build | Duro02 port | prebuilt tarball `Duro02/grok-build-termux` releases | NOT yet installed |
-| dsh-mini | LouisYang841 | single 7.7MB file, `curl\|sh`, Node ≥22.15 | NOT yet installed |
+| dsh (DeepSeek Harness) | official `deepseek-ai/deepseek-harness` | `@deepseek-ai/dsh` from npm, latest at install time; Termux shim + Bionic node-pty build + 3 native stubs | recipe ready, first install pending — see notes/DSH-TERMUX.md |
 | hermes | VPS build | `66.179.82.231:8999` HTTP server | BLOCKED — port 8999 unreachable, port 80 open; ask VPS admin to restart server |
 
 ## Candidate harnesses (researched, not yet tested)
@@ -37,8 +37,10 @@ Status: RESEARCH / PLANNING — nothing published, nothing wired up yet.
 - **grok-build-termux** (`Duro02/grok-build-termux`) — xAI Grok Build Rust
   TUI, aarch64 tarball + sha256 in Releases. Install: sha256sum -c → tar →
   `install -m 755 grok $PREFIX/bin/grok`.
-- **dsh-mini** (`LouisYang841/dsh-mini`) — DeepSeek Harness mini engine,
-  7.7MB self-contained JS, no native modules, works on Node 24 (installed).
+- **dsh-mini** (`LouisYang841/dsh-mini`) — SUPERSEDED. Was a third-party
+  31-plugin repack of the DeepSeek Harness engine; replaced by the official
+  `@deepseek-ai/dsh` npm package (562 packages, all 269 `@deepseek-ai/*`).
+  See notes/DSH-TERMUX.md for the Termux port analysis.
 - **cline-termux** (`gamihardik2009-crypto/cline-termux`) — INSTALLED above.
 - **pentestcode** (`s0ld13rr/pentestcode`) — OpenCode hard fork for offensive
   security. Needs same glibc+DNS shim recipe as opencode. Category:
@@ -89,7 +91,7 @@ termux-harness-tui/
 1. Platform Giants (claude, codex, gemini, grok)
 2. Claw Fleet (openclaw, zeroclaw, picoclaw, nanoclaw, ironclaw, microclaw)
 3. Open Engines (opencode, cline, aider, goose, plandex, pi)
-4. Standalone Cores (dsh-mini, antigravity, openclaude)
+4. Standalone Cores (dsh, antigravity, openclaude)
 5. Swarms / Parallel (cmux, herdr, multica)
 6. Specialized & SecEng (pentestcode, aider-sec)
 7. Routing & Proxies (omniroute, 9router, cliproxyapi)
@@ -100,7 +102,7 @@ termux-harness-tui/
 
 1. ✅ Install cline-termux (done, 3.0.61 works)
 2. Install grok-build from Duro02 releases (needs user go-ahead)
-3. Install dsh-mini (needs user go-ahead)
+3. Install dsh (official @deepseek-ai/dsh, needs user go-ahead)
 4. Get VPS admin to restart HTTP server on 8999 for hermes tarball
 5. Scaffold install.sh + harness-hub TUI skeleton
 6. Write manifest JSON schema + first manifests (cline, grok, dsh-mini)

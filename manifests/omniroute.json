@@ -3,10 +3,11 @@
   "version": "3.8.51",
   "category": "routing",
   "recipe": "omniroute-full",
+  "recipe_script": "omniroute-termux.sh",
   "variants": {
     "full": {
       "label": "omniroute (full dashboard)",
-      "description": "Complete build: dashboard UI + API + inference plane. Heavier build (~2GB RAM during Next.js compile, not recommended on-device — build on VPS or install precompiled dist/).",
+      "description": "DO NOT BUILD ON TERMUX. The Next.js dashboard compile asks for a 2GB heap and then swap-thrashes a 7GB phone until the kernel OOM-killer fires; it wedges the device rather than failing. recipes/omniroute-termux.sh hard-refuses this variant on-device unless OMNIROUTE_ALLOW_FULL_ON_DEVICE=1 is set explicitly. Cross-build on the VPS instead (recipes/vps/build-omniroute.sh), then rsync dist/ + app/ across.",
       "build_profile": "default",
       "needs": ["dist/server.js", "app/ (dashboard static)"]
     },

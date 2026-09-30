@@ -1,67 +1,170 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # harness-hub — TUI installer menu for AI coding harnesses on Termux
-# WIP skeleton: reads manifests/*.json, renders categories, runs recipes.
+#
+# Reads manifests/*.json, renders categories, resolves live "latest" versions
+# for npm-sourced entries, and runs the matching recipes/*.sh. Everything is
+# installed natively — no proot, no glibc shim packages.
 set -euo pipefail
 HUB_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 MANIFESTS="$HUB_DIR/manifests"
 
-if ! command -v jq >/dev/null 2>&1; then
-  echo "jq is required: pkg install jq" >&2
-  exit 1
-fi
+command -v jq >/dev/null 2>&1 || { echo "jq is required: pkg install jq" >&2; exit 1; }
 
 Crim=$'\e[38;5;161m'
+Cyn=$'\e[38;5;81m'
+Grn=$'\e[38;5;114m'
+Yel=$'\e[38;5;179m'
+Dim=$'\e[2m'
 Rst=$'\e[0m'
 
-categories=(
-  "1" "Platform Giants  (claude, codex, gemini, grok)"
-  "2" "Claw Fleet       (openclaw, zeroclaw, picoclaw, ironclaw)"
-  "3" "Open Engines     (opencode, cline, aider, goose)"
-  "4" "Standalone Cores (dsh-mini, antigravity, openclaude)"
-  "5" "Swarms           (cmux, herdr, multica)"
-  "6" "SecEng           (pentestcode)"
-  "7" "Routing          (omniroute, 9router, cliproxyapi)"
-  "8" "MCP & Tooling    (bwb-browser, curl-cffi)"
-  "9" "Doctor           (health check)"
-  "0" "Exit"
+declare -A CATEGORY=(
+  [1]="platform-giants|Platform Giants  (claude, codex, gemini, grok)"
+  [2]="claw-fleet|Claw Fleet       (openclaw, zeroclaw, picoclaw, ironclaw)"
+  [3]="open-engines|Open Engines     (opencode, cline, aider, goose)"
+  [4]="standalone-cores|Standalone Cores (dsh, antigravity, openclaude)"
+  [5]="swarms|Swarms           (cmux, hermes, herdr, multica)"
+  [6]="seceng|SecEng           (pentestcode)"
+  [7]="routing|Routing          (omniroute, 9router, cliproxyapi)"
+  [8]="mcp-tooling|MCP & Tooling    (bwb-browser, curl-cffi)"
 )
+
+# Which recipe script backs a manifest. Manifests may name it explicitly via
+# "recipe_script"; otherwise fall back to <name>-termux.sh.
+recipe_for() {
+  local manifest="$1" name
+  name="$(jq -r '.name' "$manifest")"
+  local declared
+  declared="$(jq -r '.recipe_script // empty' "$manifest")"
+  if [ -n "$declared" ]; then printf '%s\n' "$declared"; return; fi
+  printf '%s-termux.sh\n' "$name"
+}
+
+# npm manifests pin nothing useful in-tree, so ask the registry what "latest"
+# actually is right now. Any failure just hides the badge.
+latest_of() {
+  local url="$1" pkg
+  pkg="$(printf '%s' "$url" | sed -n 's#.*registry\.npmjs\.org/\(@\{0,1\}[^/?]*\)\{0,1\}.*#\1#p')"
+  [ -n "$pkg" ] || return 1
+  case "$pkg" in @*) ;; *) return 1 ;; esac
+  curl -fsSL --max-time 8 "https://registry.npmjs.org/${pkg//\//%2f}" 2>/dev/null \
+    | jq -r '."dist-tags".latest' 2>/dev/null
+}
+
+status_of() {
+  local name="$1"
+  if [ -e "$PREFIX/bin/$name" ]; then
+    printf '%s\n' "${Grn}installed${Rst}"
+  else
+    printf '%s\n' "${Dim}not installed${Rst}"
+  fi
+}
+
+run_recipe() {
+  local manifest="$1" name recipe
+  name="$(jq -r '.name' "$manifest")"
+  recipe="$(recipe_for "$manifest")"
+  local path="$HUB_DIR/recipes/$recipe"
+  if [ ! -f "$path" ]; then
+    printf '%s\n' "${Yel}No recipe script for $name (looked for recipes/$recipe).${Rst}"
+    printf '%s\n' "  Source: $(jq -r '.source.url' "$manifest")"
+    return 1
+  fi
+  printf '%s\n' "${Cyn}Running recipes/$recipe${Rst}"
+  local variant
+  variant="$(jq -r '.default_variant // empty' "$manifest")"
+  if [ -n "$variant" ]; then
+    printf '%s\n' "${Dim}variant: $variant$(jq -r --arg v "$variant" '.variants[$v].description // ""' "$manifest")${Rst}"
+  fi
+  printf '%s\n' "${Dim}This installs straight from the upstream source and patches it for"
+  printf '%s' "Bionic on the fly. It can take a while and pull a lot of disk.${Rst}"
+  printf '\n'
+  read -r -p "  Proceed? [y/N] " ok
+  case "$ok" in [yY]*) ;; *) printf '%s\n' "  cancelled."; return 1 ;; esac
+  bash "$path"
+  local rc=$?
+  printf '\n'
+  if [ $rc -eq 0 ] && [ -e "$PREFIX/bin/$name" ]; then
+    printf '%s\n' "${Grn}$name installed -> $PREFIX/bin/$name${Rst}"
+    local smoke
+    smoke="$(jq -r '.post_install // empty' "$manifest")"
+    if [ -n "$smoke" ]; then
+      printf '%s\n' "${Dim}post-install check: $smoke${Rst}"
+      if bash -c "$smoke" >/dev/null 2>&1; then
+        printf '%s\n' "${Grn}  smoke test passed${Rst}"
+      else
+        printf '%s\n' "${Yel}  smoke test did not pass — run '$smoke' yourself to see why${Rst}"
+      fi
+    fi
+  else
+    printf '%s\n' "${Yel}recipe exited $rc — nothing changed beyond what it already did${Rst}"
+  fi
+  return $rc
+}
+
+list_category() {
+  local want="$1"
+  local -a files=()
+  local f
+  for f in "$MANIFESTS"/*.json; do
+    [ -f "$f" ] || continue
+    [ "$(jq -r '.name // empty' "$f")" = "schema" ] && continue
+    [ "$(jq -r '.category // empty' "$f")" = "$want" ] && files+=("$f")
+  done
+  if [ ${#files[@]} -eq 0 ]; then
+    printf '%s\n' "${Dim}  (nothing registered in this category yet)${Rst}"
+    return
+  fi
+  local i=1
+  for f in "${files[@]}"; do
+    local name version url latest
+    name="$(jq -r '.name' "$f")"
+    version="$(jq -r '.version' "$f")"
+    url="$(jq -r '.source.url // ""' "$f")"
+    printf '  %s%2d%s %s%-14s%s %-14s %s\n' \
+      "$Cyn" "$i" "$Rst" "$Crim" "$name" "$Rst" "$version" "$(status_of "$name")"
+    latest=""
+    [ -n "$url" ] && latest="$(latest_of "$url" || true)"
+    if [ -n "$latest" ] && [ "$latest" != "$version" ] && [ "$version" != "npm-latest" ]; then
+      printf '        %s→ npm latest is %s%s\n' "$Yel" "$latest" "$Rst"
+    fi
+    i=$((i + 1))
+  done
+  printf '\n'
+  printf '  %sPick a number to install, or press enter to go back:%s ' "$Dim" "$Rst"
+  read -r pick
+  [ -n "$pick" ] || return 0
+  case "$pick" in
+    *[!0-9]*) printf '%s\n' "${Yel}not a number${Rst}"; sleep 1; return 0 ;;
+  esac
+  if [ "$pick" -lt 1 ] || [ "$pick" -gt ${#files[@]} ]; then
+    printf '%s\n' "${Yel}out of range${Rst}"; sleep 1; return 0
+  fi
+  run_recipe "${files[$((pick - 1))]}" || true
+  printf '\n%sPress enter to continue...%s ' "$Dim" "$Rst"
+  read -r
+}
 
 while true; do
   clear
-  printf "%s\n" "${Crim}╾━━━━━ HARNESS HUB ━━━━━◆${Rst}"
-  printf "%s\n" "  Native Termux installer — no proot"
-  printf "\n"
-  i=0
-  for ((i=0; i<${#categories[@]}; i+=2)); do
-    printf "  [%s] %s\n" "${categories[$i]}" "${categories[$((i+1))]}"
+  printf '%s╾━━━━━ HARNESS HUB ━━━━━◆%s\n' "$Crim" "$Rst"
+  printf '%s  Native Termux installer — no proot, no glibc%s\n' "$Dim" "$Rst"
+  printf '\n'
+  for key in 1 2 3 4 5 6 7 8; do
+    printf '  %s[%s]%s %s\n' "$Cyn" "$key" "$Rst" "${CATEGORY[$key]#*|}"
   done
-  printf "\n  Choice: "
+  printf '  %s[9]%s Doctor           (health check)\n' "$Cyn" "$Rst"
+  printf '  %s[0]%s Exit\n\n' "$Cyn" "$Rst"
+  printf '  Choice: '
   read -r choice
   case "$choice" in
     0) exit 0 ;;
-    9) bash "$HUB_DIR/recipes/doctor.sh" || true ;;
+    9) bash "$HUB_DIR/recipes/doctor.sh"; printf '\n%sPress enter...%s ' "$Dim" "$Rst"; read -r ;;
     [1-8])
-      echo "  -- listing manifests in category $choice --"
-      for f in "$MANIFESTS"/*.json; do
-        [ -e "$f" ] && continue
-      done 2>/dev/null
-      for f in "$MANIFESTS"/*.json; do
-        [ -f "$f" ] || continue
-        cat_sel=$(jq -r '.category // empty' "$f" 2>/dev/null)
-        case "$choice" in
-          1) want=platform-giants ;; 2) want=claw-fleet ;;
-          3) want=open-engines ;;    4) want=standalone-cores ;;
-          5) want=swarms ;;          6) want=seceng ;;
-          7) want=routing ;;         8) want=mcp-tooling ;;
-        esac
-        if [ "$cat_sel" = "$want" ]; then
-          printf "   • %s (%s)\n" \
-            "$(jq -r .name "$f")" "$(jq -r .version "$f")"
-        fi
-      done
-      printf "\n  Press enter to continue..."
-      read -r
+      clear
+      printf '%s╾ %s%s\n' "$Crim" "${CATEGORY[$choice]#*|}" "$Rst"
+      printf '\n'
+      list_category "${CATEGORY[$choice]%%|*}"
       ;;
-    *) echo "  invalid" ; sleep 1 ;;
+    *) printf '%s\n' "${Yel}invalid${Rst}"; sleep 1 ;;
   esac
 done

@@ -1,0 +1,21 @@
+{
+  "name": "dsh",
+  "version": "npm-latest",
+  "category": "standalone-cores",
+  "recipe": "custom-script",
+  "recipe_script": "dsh-termux.sh",
+  "source": {
+    "url": "https://registry.npmjs.org/@deepseek-ai/dsh",
+    "size_mb": 0.1
+  },
+  "deps": [
+    "nodejs",
+    "clang",
+    "make",
+    "python",
+    "git"
+  ],
+  "post_install": "dsh --version",
+  "notes": "Official DeepSeek Harness (dsh), resolved from the @deepseek-ai npm scope at install time — not the old dsh-mini repack. Runs natively on Bionic. Four Termux adaptations: (1) a NODE_OPTIONS --require preload reports process.platform as 'linux', because Node says 'android' on Termux and dsh-subprocess-local's process inspector rejects anything but linux/darwin; NODE_OPTIONS is used so the override also reaches worker_threads, which get a fresh process object. (2) node-pty is compiled from source against Termux pty.h/libutil, since the published linux-arm64 prebuild is glibc-linked. (3) koffi, sharp and sherpa-onnx are stubbed — no Android build exists and none is reachable on Linux except sharp. (4) install runs with --ignore-scripts so koffi's cnoke build and node-pty's node-gyp fallback do not run. Landlock sandboxing probes as unavailable on this kernel and dsh runs unsandboxed, which is upstream's documented fail-closed path. Re-run the recipe to upgrade to a newer release.",
+  "verified_on": "shim + node-pty Bionic build verified on 2026-09-30 SM-S911W aarch64 Node 24.18; full dsh run pending first install"
+}
