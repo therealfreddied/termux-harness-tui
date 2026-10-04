@@ -239,7 +239,7 @@ EOF
   ( cd "$DSH_DIR" && npm install --omit=dev --ignore-scripts --no-audit --no-fund )
   printf '%s' "$VERSION" > "$DSH_DIR/.dsh-termux-version"
 else
-  log "tree already at $VERSION — skipping npm install"
+  log "tree already at $VERSION — skipping npm install --no-audit --no-fund --omit=dev"
 fi
 
 DSH_BIN="$DSH_DIR/node_modules/@deepseek-ai/dsh/lib/bin.js"

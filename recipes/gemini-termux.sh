@@ -7,7 +7,7 @@ PKG="@google/gemini-cli"
 log() { printf '\033[38;5;161m==>\033[0m %s\n' "$*"; }
 
 log "installing $PKG (npm global)..."
-npm install -g "$PKG"
+npm install --no-audit --no-fund --omit=dev -g "$PKG"
 
 BIN="$PREFIX/bin/gemini"
 if command -v termux-fix-shebang >/dev/null 2>&1 && [ -e "$BIN" ]; then

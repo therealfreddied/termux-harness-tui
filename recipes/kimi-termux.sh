@@ -14,7 +14,7 @@ command -v npm >/dev/null 2>&1 || { echo "FATAL: npm is required" >&2; exit 1; }
 
 log "installing $PKG into $OPT_DIR..."
 mkdir -p "$OPT_DIR"
-npm install -g --prefix "$OPT_DIR" "$PKG"
+npm install --no-audit --no-fund --omit=dev -g --prefix "$OPT_DIR" "$PKG"
 
 PKGDIR="$OPT_DIR/lib/node_modules/@moonshot-ai/kimi-code"
 if command -v termux-fix-shebang >/dev/null 2>&1 && [ -d "$PKGDIR/dist" ]; then

@@ -7,7 +7,7 @@ PKG="@earendil-works/pi-coding-agent"
 log() { printf '\033[38;5;161m==>\033[0m %s\n' "$*"; }
 
 log "installing $PKG (npm global, --ignore-scripts per upstream docs)..."
-npm install -g --ignore-scripts "$PKG"
+npm install --no-audit --no-fund --omit=dev -g --ignore-scripts "$PKG"
 
 BIN="$PREFIX/bin/pi"
 if command -v termux-fix-shebang >/dev/null 2>&1 && [ -e "$BIN" ]; then

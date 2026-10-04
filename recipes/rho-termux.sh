@@ -25,7 +25,7 @@ mkdir -p "$OPT_DIR"
 curl -fsSL "$TARBALL" | tar -xzf - -C "$OPT_DIR" --strip-components=1
 
 log "installing npm dependencies..."
-npm install -g --prefix "$OPT_DIR" "$PKG"
+npm install --no-audit --no-fund --omit=dev -g --prefix "$OPT_DIR" "$PKG"
 
 # Ensure top-level node_modules is symlinked for tsx resolution
 if [ -d "$OPT_DIR/lib/node_modules/@rhobot-dev/rho/node_modules" ] && [ ! -e "$OPT_DIR/node_modules" ]; then

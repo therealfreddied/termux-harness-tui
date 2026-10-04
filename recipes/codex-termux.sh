@@ -7,7 +7,7 @@ PKG="@mmmbuto/codex-cli-termux"
 log() { printf '\033[38;5;161m==>\033[0m %s\n' "$*"; }
 
 log "installing $PKG (npm global)..."
-npm install -g "$PKG"
+npm install --no-audit --no-fund --omit=dev -g "$PKG"
 
 PKGDIR="$PREFIX/lib/node_modules/@mmmbuto/codex-cli-termux"
 if command -v termux-fix-shebang >/dev/null 2>&1 && [ -d "$PKGDIR/bin" ]; then
