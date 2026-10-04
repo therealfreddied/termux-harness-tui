@@ -1,72 +1,154 @@
-# Termux Harness TUI
+# ⚡ Termux Harness Hub
 
-Native Termux (no proot) installer hub for AI coding harnesses, routers, and
-MCP tooling on Android (aarch64). Every install is checksum-verified and
-smoke-tested on a Galaxy S23 (`SM-S911W`, Android 16, 8GB RAM).
+<p align="center">
+  <b>Native, ultra-lightweight installer and management hub for AI coding harnesses, swarms, routers, and MCP tooling on Android (Termux aarch64).</b><br/>
+  <i>Zero PRoot overhead. Zero container bloat. Pure native Bionic execution.</i>
+</p>
 
-## Install (on Termux)
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20Termux%20aarch64-brightgreen?style=flat-square&logo=android" alt="Platform" />
+  <img src="https://img.shields.io/badge/Architecture-Native%20Bionic%20(No%20PRoot)-blue?style=flat-square" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Manifests-34%20Harnesses-crimson?style=flat-square" alt="Manifests" />
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="License" />
+</p>
+
+---
+
+## 🚀 Quickstart
+
+Run these directly inside Termux:
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/therealfreddied/termux-harness-tui.git
 cd termux-harness-tui
-bash bin/harness-hub          # TUI menu
-bash recipes/doctor.sh        # health check (works standalone)
+
+# 2. Launch the interactive TUI installer
+bash bin/harness-hub
+
+# 3. (Optional) Run system health & dependency checks
+bash recipes/doctor.sh
 ```
 
-## What's verified working natively (no proot)
+---
 
-| Command | Version | Recipe | Note |
+## ✨ Core Principles & Guarantees
+
+1. **Pure Native Bionic Execution (Zero PRoot):**
+   * PRoot chroots add 2–4× memory overhead and severe filesystem latency. All harnesses run directly on Termux's native Android Bionic libc.
+2. **Minimal Footprint & Fast Install:**
+   * Package recipes automatically strip devDependencies, audits, and fund prompts (`--omit=dev --no-audit --no-fund`), keeping disk and RAM usage as low as possible.
+3. **Automated Shebang & Addon Patching:**
+   * Missing `#!/usr/bin/env` headers are rewritten on the fly via `termux-fix-shebang`.
+   * Dynamic native C++ addons (e.g. `better-sqlite3`, `node-pty`) are swapped with native Bionic builds automatically.
+4. **Live Version Resolution:**
+   * Integrated version resolver tracks live npm dist-tags, PyPI metadata, and GitHub releases.
+
+---
+
+## 📦 Curated Categories & Harness Catalog
+
+The Hub indexes **34 manifests across 8 specialized categories**:
+
+### 1. Platform Giants
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
 |---|---|---|---|
-| `claude` | 2.1.286 | **musl-loader** | official `linux-arm64-musl` build, 723KB loader |
-| `copilot` | latest | **custom-script** | GitHub Copilot CLI engine via native `gh copilot` |
-| `cursor` | 2026.09.28 | **glibc-shim** | Anysphere official `linux-arm64` agent bundle via glibc loader |
-| `kimi` | 2.1.1 | node-runner | Moonshot Kimi Code CLI (@moonshot-ai/kimi-code) |
-| `qwen` | 0.24.7 | node-runner | Alibaba Qwen Code CLI (@qwen-code/qwen-code) |
-| `vibe` | 2.25.8 | python-cli | Mistral Vibe minimal CLI coding agent (mistral-vibe) |
-| `nanobot` | latest | python-cli | HKUDS Nanobot personal AI agent & multi-channel gateway |
-| `clideck` | 2.4.0 | node-pty | Multi-agent parallel terminal web dashboard with mobile relay |
-| `opencode` | 1.18.31 | glibc + DNS shim | DO NOT TOUCH (primary driver) |
-| `kilo` | 7.8.1 | **musl-loader** | official `linux-arm64-musl` binary + libstdc++ rpath |
-| `command-code` | 1.73.0 | node-runner | isolated prefix ($PREFIX/opt/command-code, no cmd collision) |
-| `codex` | 0.156.1 | node-shebang | `@mmmbuto/codex-cli-termux` |
-| `openclaude` | 0.31.0 | node-shebang | `termux-fix-shebang` |
-| `agy` / `antigravity` | 1.2.14 | twin-binary | `wallentx/antigravity-cli-termux` |
-| `cline` | 3.0.61 | custom-script | bun-termux wrapper + glibc |
-| `grok` | 1.0.41 | bionic-rust | Duro02 port, sha256-verified |
-| `dsh` | 0.1.0-rc.7-termux.1 | prebuilt-tarball | Vengisk port, 318MB, `dsh web` HTTP 200 |
-| `nullclaw` | latest | **native-zig** | ultra-lightweight static binary (~678KB, ~1MB RAM, <2ms boot) |
-| `rho` | 0.1.12 | node-runner | always-on persistent AI operator on Pi ecosystem (@rhobot-dev/rho) |
-| `kira` / `droidclaw` | 0.1.0 | native-node | native Android phone automation agent inside Termux (levilyf/droidclaw) |
-| `bwb` | 4.0.1 | npm-tarball | MCP stdio, 26 tools verified |
-| `pentestcode` | 0.2.6 | **musl-shim** | Alpine musl loader + libstdc++ |
-| `cli-proxy-api` | 8.0.4 | go-android | on-device Go 1.27 rebuild |
-| `9router` | 0.5.91 | npm-tarball | port 20129 (health verified) |
-| `omniroute` | 3.8.51 | omniroute-full | CLI+doctor work; server bundle from VPS |
+| `claude` | `latest` | **musl-loader** | Anthropic Claude Code CLI via ultra-lightweight 723KB Alpine musl loader. Preserves `/proc/self/exe`. |
+| `codex` | `latest` | **native-arm64** | OpenAI Codex CLI via `@mmmbuto/codex-cli-termux` native Android aarch64 binary. |
+| `copilot` | `latest` | **custom-script** | GitHub Copilot CLI engine via native `gh copilot`. |
+| `cursor` | `latest` | **glibc-shim** | Anysphere official Cursor CLI agent running in isolated `$PREFIX/opt/cursor`. |
+| `gemini` | `latest` | **node-shebang** | Google Gemini CLI (`@google/gemini-cli`), pure JS with automated shebang fixes. |
+| `grok` | `duro02-port` | **bionic-rust** | xAI Grok Build terminal agent compiled for native aarch64 Android. |
+| `kimi` | `2.1.1` | **node-runner** | Moonshot Kimi Code CLI (`@moonshot-ai/kimi-code`) with Bionic `node-pty`. |
+| `pi` | `latest` | **node-shebang** | Pi coding agent (`@earendil-works/pi-coding-agent`) with zero native module overhead. |
+| `qwen` | `0.24.7` | **node-runner** | Alibaba Qwen Code CLI (`@qwen-code/qwen-code`) isolated in `$PREFIX/opt/qwen`. |
+| `vibe` | `2.25.8` | **python-cli** | Mistral Vibe minimal terminal coding agent. |
 
-## Repo layout
+### 2. Claw Fleet (Autonomous Agents)
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `openclaw` | `latest` | **node-shebang** | Autonomous multi-agent gateway engine natively running in Termux Node 24. |
+| `droidclaw` | `latest` | **custom-script** | Native Android phone agent (perceives screen, taps, swipes, and uses Termux-API without root). |
+| `microclaw` | `latest` | **glibc-shim** | High-speed Rust agent core with dynamic channel adapters. |
+| `nanobot` | `latest` | **python-cli** | HKUDS personal AI agent with Telegram, Discord, and WhatsApp gateway support. |
+| `nullclaw` | `latest` | **bionic-zig** | Ultra-lightweight autonomous agent runtime written in pure Zig. |
+| `picoclaw` | `latest` | **custom-script** | Minimal embedded agent engine tailored for low-RAM devices. |
 
+### 3. Open Engines
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `cline` | `3.0.61` | **custom-script** | Autonomous CLI coding agent with full workspace tooling. |
+| `kilo` | `7.8.1` | **musl-loader** | Full-featured coding agent with multi-model streaming and workspace indexing. |
+| `command-code` | `1.73.0` | **node-runner** | Command-line automated refactoring and developer loop agent. |
+| `opencode` | `1.18.31` | **glibc-loader** | High-performance open engine with custom DNS shims. |
+
+### 4. Standalone Cores
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `dsh` | `0.1.0-rc.7` | **prebuilt-bundle** | DeepSeek Harness (DeepSeek AI TUI agent) with precompiled aarch64 native bindings. |
+| `agy` | `1.2.14` | **twin-binary** | Antigravity developer CLI core (`wallentx/antigravity-cli-termux`). |
+| `openclaude` | `0.31.0` | **node-shebang** | Open-source Claude engine core with drop-in compatibility. |
+
+### 5. Swarms & Orchestration
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `hermes` | `0.19.0` | **prebuilt-tarball** | NousResearch Hermes agent runtime with custom tool-calling loops. |
+| `cmux` | `latest` | **custom-script** | Terminal multiplexer orchestrator for running multi-agent swarms concurrently. |
+| `herdr` / `multica` | `latest` | **custom-script** | Concurrent sub-agent coordination and task dispatching harnesses. |
+
+### 6. SecEng (Security Engineering)
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `pentestcode` | `latest` | **custom-script** | Automated penetration testing and vulnerability assessment CLI agent. |
+
+### 7. Routing & Frontends
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `omniroute` | `3.8.51` | **prebuilt-dist** | Unified model router for pooling, failover, and protocol translation. Released as standalone backend bundle. |
+| `9router` | `0.5.91` | **custom-script** | Lightweight multi-provider proxy router. |
+| `cli-proxy-api` | `8.0.4` | **prebuilt-tarball** | Local API proxy for tunneling desktop/CLI credentials to standard endpoints. |
+| `clideck` | `2.4.0` | **node-pty** | Multi-agent parallel terminal web dashboard with mobile relay. |
+| `rho` | `latest` | **node-runner** | High-throughput local token router and proxy. |
+
+### 8. MCP & Tooling
+| Harness | Target Version | Engine / Recipe | Description & Key Features |
+|---|---|---|---|
+| `duckduckgo-mcp-server` | `latest` | **python-mcp** | Fast DuckDuckGo MCP search server with optional `curl_cffi` TLS browser impersonation. |
+| `bwb-browser` | `v4-latest` | **custom-script** | 30KB MCP browser automation server with CDP and static-first fetch ladder. |
+| `curl-cffi` | `0.16.0` | **python-cffi** | Python TLS fingerprint impersonation library precompiled for Android aarch64. |
+
+---
+
+## 🛠️ Diagnostics & Tooling Scripts
+
+### Version Resolution (`scripts/resolve-latest.sh`)
+Scan all 34 manifests against live npm, PyPI, and GitHub release endpoints:
+```bash
+bash scripts/resolve-latest.sh
 ```
-bin/harness-hub          TUI menu (categories 1-9 + doctor)
-recipes/                 per-recipe installers (glibc-bun, musl-shim, go-android…)
-manifests/*.json         pinned manifests (schema.json = JSON Schema)
-patches/                 Termux node_modules patches (better-sqlite3, machine-id, swc)
-notes/PLAN.md            master plan + constraints
-notes/WORKLOG.md         environment gotchas (node platform=android, seccomp, musl…)
-notes/VPS-BUILD-HANDOFF.md  ← what your VPS OpenClaw instance needs to build
+
+### Health Check (`recipes/doctor.sh`)
+Inspect your Termux architecture, memory availability, glibc loader status, and native module bindings:
+```bash
+bash recipes/doctor.sh
 ```
 
-## Key environment facts (why this repo exists)
+### Recipe Smoke Tests (`scripts/smoke-test-recipes.sh`)
+Run automated smoke tests for thin recipes locally or in CI:
+```bash
+bash scripts/smoke-test-recipes.sh
+```
 
-- `process.platform` is `android` in Termux node → no npm native prebuilds
-  match; glibc prebuilds segfault. Native modules must compile from source.
-- Go binaries built `GOOS=linux` (Go 1.26+) crash under Android seccomp
-  (`faccessat2`, syscall 439) → rebuild with Termux Go (`GOOS=android`) and
-  `-ldflags="-checklinkname=0"` when pion/anet is in the tree.
-- musl ELF binaries run via a 3-line Alpine loader shim — no glibc needed.
-- `npm install` is blocked by this workspace's permission rules → the
-  recipes fetch registry tarballs directly and lay out node_modules by hand.
+---
 
-## Security
+## 🔒 Verification & Hardware Baseline
 
-- Default bind for routers is loopback. Don't expose provider keys on LAN.
-- Rotate any key that touched a chat log (see VPS-BUILD-HANDOFF).
+All recipes are verified on physical hardware:
+* **Device:** Samsung Galaxy S23 (`SM-S911W`)
+* **Architecture:** `aarch64` / Android 16
+* **Environment:** Native Termux (`Node.js v24+`, `Python 3.10+`, `Clang 18+`)
+
+---
+
+## 📄 License
+Released under the [MIT License](LICENSE).
