@@ -1,0 +1,14 @@
+{
+  "name": "duckduckgo-mcp-server",
+  "version": "latest",
+  "category": "mcp-tooling",
+  "recipe": "custom-script",
+  "recipe_script": "duckduckgo-mcp-server-termux.sh",
+  "source": {
+    "url": "https://pypi.org/project/duckduckgo-mcp-server/"
+  },
+  "deps": ["python"],
+  "post_install": "duckduckgo-mcp-server --help",
+  "notes": "Fast MCP server for web search via DuckDuckGo with text extraction. Integrates seamlessly with our pre-built curl_cffi recipe for TLS-fingerprint browser impersonation (--fetch-backend curl). Command: duckduckgo-mcp-server.",
+  "verified_on": "pending"
+}

@@ -13,8 +13,8 @@ if [ ! -d "$MANIFESTS_DIR" ]; then
   exit 1
 fi
 
-printf "%-18s %-20s %-20s %-10s\n" "HARNESS" "MANIFEST-VER" "LIVE-LATEST" "STATUS"
-printf "%-18s %-20s %-20s %-10s\n" "-------" "------------" "-----------" "------"
+printf "%-22s %-20s %-20s %-10s\n" "HARNESS" "MANIFEST-VER" "LIVE-LATEST" "STATUS"
+printf "%-22s %-20s %-20s %-10s\n" "-------" "------------" "-----------" "------"
 
 for manifest in "$MANIFESTS_DIR"/*.json; do
   [ -f "$manifest" ] || continue
@@ -40,11 +40,15 @@ for manifest in "$MANIFESTS_DIR"/*.json; do
     if [ -n "$pkg_name" ]; then
       live_version="$(curl -sSL --max-time 10 "https://registry.npmjs.org/${pkg_name}/latest" 2>/dev/null | jq -r '.version // "-"' 2>/dev/null || echo "-")"
     fi
+  elif [[ "$source_url" == *"pypi.org"* ]] || [ "$source_type" = "pypi" ]; then
+    pypi_pkg="$(echo "$source_url" | sed -E 's|.*/project/([^/]+)/?|\1|')"
+    if [ -n "$pypi_pkg" ]; then
+      live_version="$(curl -sSL --max-time 10 "https://pypi.org/pypi/${pypi_pkg}/json" 2>/dev/null | jq -r '.info.version // "-"' 2>/dev/null || echo "-")"
+    fi
   elif [[ "$source_url" == *"github.com"* ]] || [ "$source_type" = "github-release" ]; then
     if [[ "$source_url" =~ github\.com/([^/]+)/([^/]+) ]]; then
       owner="${BASH_REMATCH[1]}"
       repo="${BASH_REMATCH[2]%.git}"
-      # Filter to avoid pointing to this repo's own releases if upstream is separate
       live_version="$(curl -sSL --max-time 10 "https://api.github.com/repos/${owner}/${repo}/releases/latest" 2>/dev/null | jq -r '.tag_name // "-"' 2>/dev/null || echo "-")"
       live_version="${live_version#v}"
     fi
@@ -60,5 +64,5 @@ for manifest in "$MANIFESTS_DIR"/*.json; do
     live_version="-"
   fi
 
-  printf "%-18s %-20s %-20s %-10s\n" "$name" "$manifest_version" "$live_version" "$status"
+  printf "%-22s %-20s %-20s %-10s\n" "$name" "$manifest_version" "$live_version" "$status"
 done
